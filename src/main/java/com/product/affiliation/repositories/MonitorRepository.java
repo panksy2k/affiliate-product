@@ -1,0 +1,8 @@
+package com.product.affiliation.repositories;
+
+import com.product.affiliation.models.Monitor;
+import io.vertx.core.Future;
+
+public interface MonitorRepository {
+  Future<Monitor> createMonitor(Monitor product);
+}

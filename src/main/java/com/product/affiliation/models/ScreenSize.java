@@ -1,5 +1,7 @@
 package com.product.affiliation.models;
 
+import com.obsidiandynamics.concat.Concat;
+
 public class ScreenSize {
   private Float size;
   private ScreenUnit unit;
@@ -19,5 +21,15 @@ public class ScreenSize {
 
   enum ScreenUnit {
     Inches;
+  }
+
+  @Override
+  public String toString() {
+    return new Concat()
+            .whenIsNotNull(this)
+            .append(size)
+            .append(" ")
+            .append(unit.name())
+            .toString();
   }
 }

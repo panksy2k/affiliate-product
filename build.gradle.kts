@@ -38,8 +38,14 @@ dependencies {
   implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}")
   implementation("com.obsidiandynamics.fulcrum:fulcrum-worker:${fulcrumVersion}")
-  testImplementation("io.vertx:vertx-unit")
-  testImplementation("junit:junit:4.13.2")
+  //testImplementation("io.vertx:vertx-unit")
+  testImplementation("io.vertx:vertx-junit5")
+  //testImplementation("junit:junit:4.13.2")
+  testImplementation("org.junit:junit-jupiter-api:${junitJupiterVersion}")
+  testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
+  testImplementation("org.testcontainers:junit-jupiter:1.16.2")
+  testImplementation("org.testcontainers:mongodb:1.16.2")
 }
 
 java {

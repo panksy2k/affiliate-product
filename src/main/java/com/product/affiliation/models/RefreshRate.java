@@ -1,5 +1,7 @@
 package com.product.affiliation.models;
 
+import com.obsidiandynamics.concat.Concat;
+
 public class RefreshRate {
   private final RateUnit measure;
   private final Short value;
@@ -15,6 +17,16 @@ public class RefreshRate {
 
   public Short getValue() {
     return value;
+  }
+
+  @Override
+  public String toString() {
+    return new Concat()
+            .whenIsNotNull(this)
+            .append(value)
+            .append(" ")
+            .append(measure.unitString)
+            .toString();
   }
 
   enum RateUnit {

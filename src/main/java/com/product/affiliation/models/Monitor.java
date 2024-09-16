@@ -5,8 +5,9 @@ public class Monitor extends Product {
   private ResponseTime responseTime;
   private ScreenSize screenSize;
 
-  public Monitor(String id, String productType, String modelName) {
-    super(id, productType, modelName);
+
+  public Monitor(String id, String modelName) {
+    super(id, modelName);
   }
 
   @Override
@@ -36,5 +37,14 @@ public class Monitor extends Product {
 
   public void setScreenSize(ScreenSize screenSize) {
     this.screenSize = screenSize;
+  }
+
+  public static Monitor withId(String id, Monitor transientObject) {
+    Monitor temp = new Monitor(id, transientObject.getModelName());
+    temp.setRefreshRate(transientObject.getRefreshRate());
+    temp.setResponseTime(transientObject.getResponseTime());
+    temp.setScreenSize(transientObject.getScreenSize());
+
+    return temp;
   }
 }

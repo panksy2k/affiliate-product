@@ -2,9 +2,13 @@ package com.product.affiliation.repositories;
 
 import com.product.affiliation.exceptions.ProductRepositoryException;
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.util.Utils;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MonitorRepositoryImpl implements MonitorRepository {
 
@@ -20,14 +24,26 @@ public class MonitorRepositoryImpl implements MonitorRepository {
       throw new ProductRepositoryException("Monitor object is null -- cannot persist");
     }
 
-    JsonObject params = new JsonObject();
-    params.put(PRODUCT_TYPE, product.getProductType());
-    params.put(REFRESH_RATE, product.getRefreshRate().toString());
-    params.put(RESPONSE_TIME, product.getResponseTime().toString());
-    params.put(SCREEN_SIZE, product.getScreenSize().toString());
-    params.put(MODEL_NAME, product.getModelName());
+    MonitorJsonObjectMapper f = new MonitorJsonObjectMapper();
+    JsonObject params = f.apply(product);
 
-    return mc.save("products", params)
+    return mc.save("monitors", params)
             .map(id -> Monitor.withId(id, product));
+  }
+
+  @Override
+  public Future<Boolean> createMonitorInBatch(List<Monitor> monitors) {
+    if (Utils.isEmpty(monitors)) {
+      return Future.failedFuture("No data to persist");
+    }
+
+    final MonitorJsonObjectMapper f = new MonitorJsonObjectMapper();
+    List<BulkOperation> insertMonitorOperation = monitors.stream()
+      .map(f)
+      .map(BulkOperation::createInsert)
+      .collect(Collectors.toList());
+
+    return mc.bulkWrite("monitors", insertMonitorOperation)
+      .map(result -> monitors.size() == result.getInsertedCount());
   }
 }

@@ -19,7 +19,7 @@ public class ScreenSize {
     return unit;
   }
 
-  enum ScreenUnit {
+  public enum ScreenUnit {
     Inches;
   }
 

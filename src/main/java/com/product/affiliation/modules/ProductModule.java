@@ -7,7 +7,6 @@ import com.product.affiliation.exceptions.DependencyCreationException;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
-import java.util.Map;
 
 /**
  * This class does the IOC using Google guice and ensures all dependencues are

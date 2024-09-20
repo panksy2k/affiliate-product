@@ -2,6 +2,7 @@ package com.product.affiliation.repositories;
 
 import com.product.affiliation.models.Monitor;
 import io.vertx.core.Future;
+import java.util.List;
 
 public interface MonitorRepository {
 
@@ -12,4 +13,6 @@ public interface MonitorRepository {
   String MODEL_NAME = "modelName";
 
   Future<Monitor> createMonitor(Monitor product);
+
+  Future<Boolean> createMonitorInBatch(List<Monitor> monitors);
 }

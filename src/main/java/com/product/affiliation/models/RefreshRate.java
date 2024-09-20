@@ -4,9 +4,9 @@ import com.obsidiandynamics.concat.Concat;
 
 public class RefreshRate {
   private final RateUnit measure;
-  private final Short value;
+  private final Integer value;
 
-  public RefreshRate(RateUnit measure, Short value) {
+  public RefreshRate(RateUnit measure, Integer value) {
     this.measure = measure;
     this.value = value;
   }
@@ -15,7 +15,7 @@ public class RefreshRate {
     return measure;
   }
 
-  public Short getValue() {
+  public Integer getValue() {
     return value;
   }
 
@@ -29,7 +29,7 @@ public class RefreshRate {
             .toString();
   }
 
-  enum RateUnit {
+  public enum RateUnit {
     HERTZ("Hz");
 
     private final String unitString;

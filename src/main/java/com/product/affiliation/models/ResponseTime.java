@@ -19,7 +19,7 @@ public class ResponseTime {
     return measurement;
   }
 
-  enum Measurement {
+  public enum Measurement {
     Milliseconds;
   }
 

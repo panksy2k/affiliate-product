@@ -15,4 +15,6 @@ public interface MonitorRepository {
   Future<Monitor> createMonitor(Monitor product);
 
   Future<Boolean> createMonitorInBatch(List<Monitor> monitors);
+
+  Future<Boolean> removeMonitor(String id);
 }

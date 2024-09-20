@@ -4,6 +4,7 @@ import com.product.affiliation.models.Monitor;
 import com.product.affiliation.models.RefreshRate;
 import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
+import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxTestContext;
 import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +22,7 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
       temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
       temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
 
-        //When
+      //When
       SUT = new MonitorRepositoryImpl(client);
 
         //Then
@@ -60,5 +61,32 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
         })
         .onFailure(t -> context.failNow(t));
     });
-    }
+  }
+
+  @Test
+  public void testRemoveMonitor(VertxTestContext context) {
+    Monitor temp_1 = new Monitor(null, "66F6UAC3UK");
+    temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
+    temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
+
+    Checkpoint createCheckpoint = context.checkpoint();
+    SUT = new MonitorRepositoryImpl(client);
+
+    //Then
+    context.verify(() -> {
+      SUT.createMonitor(temp_1)
+        .map(m -> {
+          String id = m.getId();
+          createCheckpoint.flag();
+          return id;
+        })
+        .compose(id -> SUT.removeMonitor(id))
+        .onSuccess(r -> {
+          Assertions.assertTrue(r);
+          context.completeNow();
+        })
+        .onFailure(context::failNow);
+    });
+  }
 }

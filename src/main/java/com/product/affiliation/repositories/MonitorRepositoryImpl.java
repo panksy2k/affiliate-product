@@ -46,4 +46,13 @@ public class MonitorRepositoryImpl implements MonitorRepository {
     return mc.bulkWrite("monitors", insertMonitorOperation)
       .map(result -> monitors.size() == result.getInsertedCount());
   }
+
+  @Override
+  public Future<Boolean> removeMonitor(String id) {
+    JsonObject query = new JsonObject();
+    query.put("_id", id);
+
+    return mc.removeDocument("monitors", query)
+      .map(result -> result.getRemovedCount() > 0);
+  }
 }

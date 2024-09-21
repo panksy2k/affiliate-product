@@ -1,8 +1,13 @@
 package com.product.affiliation.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Monitor extends Product {
+  @JsonProperty
   private RefreshRate refreshRate;
+  @JsonProperty
   private ResponseTime responseTime;
+  @JsonProperty
   private ScreenSize screenSize;
 
 

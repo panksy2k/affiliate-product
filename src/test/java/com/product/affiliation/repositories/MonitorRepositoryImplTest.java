@@ -29,6 +29,7 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
       context.verify(() -> {
         SUT.createMonitor(temp)
           .onSuccess(m -> {
+            System.out.println(m.toString());
             Assertions.assertNotNull(m.getId());
             context.completeNow();
           })
@@ -89,4 +90,48 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
         .onFailure(context::failNow);
     });
   }
+
+  @Test
+  public void testFindAllByScreenSize(VertxTestContext context) {
+    SUT = new MonitorRepositoryImpl(client);
+    Checkpoint createChkpoint = context.checkpoint();
+    Checkpoint retrieveCheckpoint = context.checkpoint();
+
+    Monitor temp_1 = new Monitor(null, "66F6UAC3UK");
+    temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
+    temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
+
+    Monitor criteria = new Monitor();
+    criteria.setScreenSize(new ScreenSize(27.0f, ScreenSize.ScreenUnit.Inches));
+
+    context.verify(() -> {
+
+      SUT.createMonitor(temp_1)
+        .map(result -> {
+          String primaryId = result.getId();
+          Assertions.assertNotNull(primaryId);
+          createChkpoint.flag();
+
+          return primaryId;
+        })
+        .compose(id -> SUT.findMonitors(criteria))
+        .map(l -> {
+          Assertions.assertTrue(l.size() == 1);
+          Assertions.assertEquals("MONITOR", l.get(0).getProductType());
+          Assertions.assertEquals(165, l.get(0).getRefreshRate().getValue());
+          Assertions.assertEquals(27.0f, l.get(0).getScreenSize().getSize());
+          Assertions.assertEquals(0.5f, l.get(0).getResponseTime().getValue());
+
+          retrieveCheckpoint.flag();
+
+          System.out.println(l.toString());
+          return l;
+        })
+        .onSuccess(s -> context.completeNow())
+        .onFailure(context::failNow);
+    });
+  }
+
+
 }

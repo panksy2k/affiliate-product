@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 public abstract class Product {
 
+  @JsonSetter
   protected final String id;
+  @JsonSetter
   protected final String modelName;
 
-  protected Product(@JsonSetter String id, @JsonSetter String modelName) {
+  protected Product(String id, String modelName) {
     this.id = id;
     this.modelName = modelName;
   }

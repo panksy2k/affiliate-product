@@ -8,14 +8,18 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MonitorRepositoryImpl implements MonitorRepository {
 
   private final MongoClient mc;
 
+  private final MonitorDocumentMapper monitorDocumentMapper;
+
   public MonitorRepositoryImpl(MongoClient mongoClient) {
     this.mc = mongoClient;
+    this.monitorDocumentMapper = new MonitorDocumentMapper();
   }
 
   @Override
@@ -27,7 +31,7 @@ public class MonitorRepositoryImpl implements MonitorRepository {
     MonitorJsonObjectMapper f = new MonitorJsonObjectMapper();
     JsonObject params = f.apply(product);
 
-    return mc.save("monitors", params)
+    return mc.save(COLLECTION_NAME, params)
             .map(id -> Monitor.withId(id, product));
   }
 
@@ -43,7 +47,7 @@ public class MonitorRepositoryImpl implements MonitorRepository {
       .map(BulkOperation::createInsert)
       .collect(Collectors.toList());
 
-    return mc.bulkWrite("monitors", insertMonitorOperation)
+    return mc.bulkWrite(COLLECTION_NAME, insertMonitorOperation)
       .map(result -> monitors.size() == result.getInsertedCount());
   }
 
@@ -54,5 +58,19 @@ public class MonitorRepositoryImpl implements MonitorRepository {
 
     return mc.removeDocument("monitors", query)
       .map(result -> result.getRemovedCount() > 0);
+  }
+
+  @Override
+  public Future<List<Monitor>> findMonitors(Monitor queryCriteria) {
+    JsonObject query = new JsonObject();
+
+    Optional.ofNullable(queryCriteria.getProductType()).ifPresent(ss -> query.put(PRODUCT_TYPE, ss));
+    Optional.ofNullable(queryCriteria.getScreenSize()).ifPresent(ss -> query.put(SCREEN_SIZE, ss.toString()));
+    Optional.ofNullable(queryCriteria.getRefreshRate()).ifPresent(rr -> query.put(REFRESH_RATE, rr.toString()));
+    Optional.ofNullable(queryCriteria.getResponseTime()).ifPresent(rt -> query.put(RESPONSE_TIME, rt.toString()));
+    Optional.ofNullable(queryCriteria.getModelName()).ifPresent(mn -> query.put(MODEL_NAME, mn));
+
+    return mc.find(COLLECTION_NAME, query)
+      .map(l -> l.stream().map(monitorDocumentMapper::apply).collect(Collectors.toList()));
   }
 }

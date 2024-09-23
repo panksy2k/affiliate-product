@@ -38,6 +38,7 @@ dependencies {
   implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}")
   implementation("com.obsidiandynamics.fulcrum:fulcrum-worker:${fulcrumVersion}")
+  implementation("com.obsidiandynamics.fulcrum:fulcrum-json:${fulcrumVersion}")
   //testImplementation("io.vertx:vertx-unit")
   testImplementation("io.vertx:vertx-junit5")
   //testImplementation("junit:junit:4.13.2")

@@ -12,9 +12,13 @@ public interface MonitorRepository {
   String SCREEN_SIZE = "screenSize";
   String MODEL_NAME = "modelName";
 
+  String COLLECTION_NAME = "monitors";
+
   Future<Monitor> createMonitor(Monitor product);
 
   Future<Boolean> createMonitorInBatch(List<Monitor> monitors);
 
   Future<Boolean> removeMonitor(String id);
+
+  Future<List<Monitor>> findMonitors(Monitor queryCriteria);
 }

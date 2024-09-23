@@ -1,10 +1,16 @@
 package com.product.affiliation.models;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.obsidiandynamics.concat.Concat;
 
 public class ScreenSize {
+  @JsonSetter("size")
   private Float size;
+  @JsonSetter("unit")
   private ScreenUnit unit;
+
+  public ScreenSize() {
+  }
 
   public ScreenSize(Float size, ScreenUnit unit) {
     this.size = size;
@@ -19,8 +25,22 @@ public class ScreenSize {
     return unit;
   }
 
-  public enum ScreenUnit {
-    Inches;
+  public static ScreenSize parse(String screenSizeString) {
+    if (screenSizeString == null) {
+      return new ScreenSize();
+    }
+
+    String[] splittedResponseTimeValue = screenSizeString.split(" ");
+    if (splittedResponseTimeValue.length == 1) {
+      return new ScreenSize(Float.valueOf(splittedResponseTimeValue[0]), null);
+    }
+
+    if (splittedResponseTimeValue.length == 2) {
+      return new ScreenSize(Float.valueOf(splittedResponseTimeValue[0]),
+        ScreenSize.ScreenUnit.fromValue(splittedResponseTimeValue[1]));
+    }
+
+    return new ScreenSize();
   }
 
   @Override
@@ -31,5 +51,19 @@ public class ScreenSize {
             .append(" ")
             .append(unit.name())
             .toString();
+  }
+
+  public enum ScreenUnit {
+    Inches;
+
+    public static ScreenUnit fromValue(String valueStr) {
+      for (ScreenUnit r : ScreenUnit.values()) {
+        if (r.name().equals(valueStr)) {
+          return r;
+        }
+      }
+
+      return null;
+    }
   }
 }

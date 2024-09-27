@@ -2,13 +2,13 @@ package com.product.affiliation.repositories;
 
 import com.product.affiliation.exceptions.ProductRepositoryException;
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.ProductQuery;
 import com.product.affiliation.util.Utils;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MonitorRepositoryImpl implements MonitorRepository {
@@ -61,14 +61,23 @@ public class MonitorRepositoryImpl implements MonitorRepository {
   }
 
   @Override
-  public Future<List<Monitor>> findMonitors(Monitor queryCriteria) {
+  public Future<List<Monitor>> findMonitors(List<ProductQuery> queryCriteria) {
     JsonObject query = new JsonObject();
 
-    Optional.ofNullable(queryCriteria.getProductType()).ifPresent(ss -> query.put(PRODUCT_TYPE, ss));
-    Optional.ofNullable(queryCriteria.getScreenSize()).ifPresent(ss -> query.put(SCREEN_SIZE, ss.toString()));
-    Optional.ofNullable(queryCriteria.getRefreshRate()).ifPresent(rr -> query.put(REFRESH_RATE, rr.toString()));
-    Optional.ofNullable(queryCriteria.getResponseTime()).ifPresent(rt -> query.put(RESPONSE_TIME, rt.toString()));
-    Optional.ofNullable(queryCriteria.getModelName()).ifPresent(mn -> query.put(MODEL_NAME, mn));
+    for (ProductQuery criteria : queryCriteria) {
+      switch (criteria.getOperation()) {
+        case GT:
+        case LT: {
+          JsonObject subQuery = new JsonObject();
+          subQuery.put(criteria.getOperation().getValue(), criteria.getValue());
+          query.put(criteria.getKey(), subQuery);
+          break;
+        }
+        case IS:
+          query.put(criteria.getKey(), criteria.getValue());
+          break;
+      }
+    }
 
     return mc.find(COLLECTION_NAME, query)
       .map(l -> l.stream().map(monitorDocumentMapper::apply).collect(Collectors.toList()));

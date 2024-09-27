@@ -35,6 +35,15 @@ public class ProductQuery {
   }
 
   public enum Operator {
-    GT, LT, IS
+    GT("$gt"), LT("$lt"), IS("");
+    final String value;
+
+    Operator(String mongoOperator) {
+      value = mongoOperator;
+    }
+
+    public String getValue() {
+      return value;
+    }
   }
 }

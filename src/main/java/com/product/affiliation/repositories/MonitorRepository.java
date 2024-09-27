@@ -1,6 +1,7 @@
 package com.product.affiliation.repositories;
 
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.ProductQuery;
 import io.vertx.core.Future;
 import java.util.List;
 
@@ -20,5 +21,5 @@ public interface MonitorRepository {
 
   Future<Boolean> removeMonitor(String id);
 
-  Future<List<Monitor>> findMonitors(Monitor queryCriteria);
+  Future<List<Monitor>> findMonitors(List<ProductQuery> queryCriteria);
 }

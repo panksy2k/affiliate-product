@@ -1,6 +1,7 @@
 package com.product.affiliation.repositories;
 
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.ProductQuery;
 import com.product.affiliation.models.RefreshRate;
 import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
@@ -98,12 +99,9 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
     Checkpoint retrieveCheckpoint = context.checkpoint();
 
     Monitor temp_1 = new Monitor(null, "66F6UAC3UK");
-    temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
-    temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
-
-    Monitor criteria = new Monitor();
-    criteria.setScreenSize(new ScreenSize(27.0f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setScreenSize(new ScreenSize(27.0F, ScreenSize.ScreenUnit.Inches));
+    temp_1.setResponseTime(new ResponseTime(0.5F, ResponseTime.Measurement.Milliseconds));
 
     context.verify(() -> {
 
@@ -115,12 +113,25 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
 
           return primaryId;
         })
-        .compose(id -> SUT.findMonitors(criteria))
+        .compose(id -> {
+          System.out.println(id);
+          ProductQuery q1 = new ProductQuery();
+          q1.setKey(MonitorRepository.REFRESH_RATE);
+          q1.setValue("165 Hz");
+          q1.setOperation(ProductQuery.Operator.IS);
+
+          ProductQuery q2 = new ProductQuery();
+          q2.setKey(MonitorRepository.SCREEN_SIZE);
+          q2.setValue("27.0 Inches");
+          q2.setOperation(ProductQuery.Operator.IS);
+
+          return SUT.findMonitors(Arrays.asList(q1, q2));
+        })
         .map(l -> {
           Assertions.assertTrue(l.size() == 1);
           Assertions.assertEquals("MONITOR", l.get(0).getProductType());
           Assertions.assertEquals(165, l.get(0).getRefreshRate().getValue());
-          Assertions.assertEquals(27.0f, l.get(0).getScreenSize().getSize());
+          Assertions.assertEquals(27.0F, l.get(0).getScreenSize().getSize());
           Assertions.assertEquals(0.5f, l.get(0).getResponseTime().getValue());
 
           retrieveCheckpoint.flag();
@@ -132,6 +143,4 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
         .onFailure(context::failNow);
     });
   }
-
-
 }

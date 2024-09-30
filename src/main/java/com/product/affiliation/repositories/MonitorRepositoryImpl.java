@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MonitorRepositoryImpl implements MonitorRepository {
@@ -81,5 +82,44 @@ public class MonitorRepositoryImpl implements MonitorRepository {
 
     return mc.find(COLLECTION_NAME, query)
       .map(l -> l.stream().map(monitorDocumentMapper::apply).collect(Collectors.toList()));
+  }
+
+  @Override
+  public Future<List<String>> findMonitorsId(List<ProductQuery> queryCriteria) {
+    JsonObject query = new JsonObject();
+
+    for (ProductQuery criteria : queryCriteria) {
+      switch (criteria.getOperation()) {
+        case GT:
+        case LT: {
+          JsonObject subQuery = new JsonObject();
+          subQuery.put(criteria.getOperation().getValue(), criteria.getValue());
+          query.put(criteria.getKey(), subQuery);
+          break;
+        }
+        case IS:
+          query.put(criteria.getKey(), criteria.getValue());
+          break;
+      }
+    }
+
+    return mc.find(COLLECTION_NAME, query)
+      .map(l -> l.stream().map(monitorDocumentMapper::apply).map(Monitor::getId).collect(Collectors.toList()));
+  }
+
+  @Override
+  public Future<Optional<Monitor>> findMonitorById(String id) {
+    JsonObject query = new JsonObject();
+    query.put("_id", id);
+
+    return mc.findOne(COLLECTION_NAME, query, null)
+      .map(Optional::ofNullable)
+      .map(result -> {
+        if (result.isPresent()) {
+          return Optional.of(monitorDocumentMapper.apply(result.get()));
+        }
+
+        return Optional.<Monitor>empty();
+      });
   }
 }

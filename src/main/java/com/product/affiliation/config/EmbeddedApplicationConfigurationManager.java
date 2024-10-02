@@ -3,11 +3,6 @@ package com.product.affiliation.config;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
-import java.util.HashMap;
-import java.util.Map;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.utility.DockerImageName;
 
 public class EmbeddedApplicationConfigurationManager implements ApplicationConfigurationManager {
 

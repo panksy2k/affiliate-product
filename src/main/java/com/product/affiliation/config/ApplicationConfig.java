@@ -1,7 +1,6 @@
 package com.product.affiliation.config;
 
 import io.vertx.core.json.JsonObject;
-import java.util.Map;
 
 public class ApplicationConfig {
     private JsonObject mongoDBConfig;

@@ -6,18 +6,16 @@ import com.product.affiliation.config.ApplicationConfigurationManager;
 import com.product.affiliation.config.EmbeddedApplicationConfigurationManager;
 import com.product.affiliation.exceptions.DependencyCreationException;
 import com.product.affiliation.modules.ProductModule;
+import com.product.affiliation.repositories.MonitorRepository;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
-import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
 
 public class MainVerticle extends AbstractVerticle {
-    private final MongoClient mongoClient;
+  private final MonitorRepository monitorRepository;
 
-    public MainVerticle(MongoClient mongoClient) {
-        this.mongoClient = mongoClient;
+  public MainVerticle(MonitorRepository mongoClient) {
+    this.monitorRepository = mongoClient;
     }
 
     public static void main(String args[]) throws Exception {

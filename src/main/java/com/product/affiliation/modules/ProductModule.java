@@ -4,6 +4,12 @@ import com.google.inject.AbstractModule;
 import com.product.affiliation.MainVerticle;
 import com.product.affiliation.config.ApplicationConfig;
 import com.product.affiliation.exceptions.DependencyCreationException;
+import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.RefreshRate;
+import com.product.affiliation.models.ResponseTime;
+import com.product.affiliation.models.ScreenSize;
+import com.product.affiliation.repositories.MonitorRepository;
+import com.product.affiliation.repositories.MonitorRepositoryImpl;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -17,7 +23,8 @@ public class ProductModule extends AbstractModule {
     /**
      * Currently we're abstracting mongoclient - change this as we built up layers
      */
-    private MongoClient mongoClient;
+    private final MongoClient mongoClient;
+  private final MonitorRepository monitorRepository;
 
     public ProductModule(Vertx vtx, ApplicationConfig appConfig) throws DependencyCreationException {
         JsonObject mongoDBConfig = appConfig.getMongoDBConfig();
@@ -27,10 +34,25 @@ public class ProductModule extends AbstractModule {
         }
 
         mongoClient = MongoClient.createShared(vtx, mongoDBConfig);
+      monitorRepository = new MonitorRepositoryImpl(mongoClient);
+
+      monitorRepository.createMonitor(createSampleMonitor()).onSuccess(h -> {
+          System.out.println("Monitor successfully created " + h.getId());
+        })
+        .onFailure(t -> System.err.println(t));
     }
 
     @Override
     protected void configure() {
-        bind(MainVerticle.class).toInstance(new MainVerticle(mongoClient));
+      bind(MainVerticle.class).toInstance(new MainVerticle(monitorRepository));
     }
+
+  private Monitor createSampleMonitor() {
+    Monitor temp = new Monitor(null, "66F6UAC3UK");
+    temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
+    temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
+    temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
+
+    return temp;
+  }
 }

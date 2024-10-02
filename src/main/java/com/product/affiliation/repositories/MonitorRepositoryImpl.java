@@ -109,6 +109,8 @@ public class MonitorRepositoryImpl implements MonitorRepository {
 
   @Override
   public Future<Optional<Monitor>> findMonitorById(String id) {
+    System.out.println("Fetching the monitors by ID ");
+
     JsonObject query = new JsonObject();
     query.put("_id", id);
 

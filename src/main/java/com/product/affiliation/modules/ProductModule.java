@@ -20,36 +20,57 @@ import io.vertx.ext.mongo.MongoClient;
  */
 public class ProductModule extends AbstractModule {
 
-    /**
-     * Currently we're abstracting mongoclient - change this as we built up layers
-     */
-    private final MongoClient mongoClient;
+  /**
+   * Currently we're abstracting mongoclient - change this as we built up layers
+   */
+  private final MongoClient mongoClient;
   private final MonitorRepository monitorRepository;
 
-    public ProductModule(Vertx vtx, ApplicationConfig appConfig) throws DependencyCreationException {
-        JsonObject mongoDBConfig = appConfig.getMongoDBConfig();
+  public ProductModule(Vertx vtx, ApplicationConfig appConfig) throws DependencyCreationException {
+    JsonObject mongoDBConfig = appConfig.getMongoDBConfig();
 
-        if(mongoDBConfig == null || mongoDBConfig.isEmpty()) {
-            throw new DependencyCreationException("mongoDB config not available - cannot instantiate mongoclient");
+    if (mongoDBConfig == null || mongoDBConfig.isEmpty()) {
+      throw new DependencyCreationException("mongoDB config not available - cannot instantiate mongoclient");
+    }
+
+    mongoClient = MongoClient.createShared(vtx, mongoDBConfig);
+
+    establishCollection(mongoClient, MonitorRepository.COLLECTION_NAME);
+    establishIndexes(mongoClient, MonitorRepository.COLLECTION_NAME);
+    monitorRepository = new MonitorRepositoryImpl(mongoClient);
+
+    monitorRepository.createMonitor(createSampleMonitor())
+      .onSuccess(h -> {
+        System.out.println("Monitor successfully created " + h.getId());
+      })
+      .onFailure(t -> System.err.println(t));
+  }
+
+  private void establishIndexes(MongoClient mongoClient, String collectionName) {
+    mongoClient.createIndex(collectionName,
+      new JsonObject().put("refreshRate", 1).put("responseTime", 1).put("screenSize", 1),
+      h -> {
+        if (h.succeeded()) {
+          System.out.println("Created index on multiple fields ");
+        } else {
+          System.out.println("Compound index failed");
         }
+      });
 
-        mongoClient = MongoClient.createShared(vtx, mongoDBConfig);
+    mongoClient.createIndex(collectionName, new JsonObject().put("productType", 1),
+      h -> {
+        if (h.succeeded()) {
+          System.out.println("Created index on productType fields");
+        } else {
+          System.out.println("Index on productType failed!");
+        }
+      });
+  }
 
-      establishCollection(mongoClient, MonitorRepository.COLLECTION_NAME);
-
-      monitorRepository = new MonitorRepositoryImpl(mongoClient);
-
-      monitorRepository.createMonitor(createSampleMonitor())
-        .onSuccess(h -> {
-          System.out.println("Monitor successfully created " + h.getId());
-        })
-        .onFailure(t -> System.err.println(t));
-    }
-
-    @Override
-    protected void configure() {
-      bind(MainVerticle.class).toInstance(new MainVerticle(monitorRepository));
-    }
+  @Override
+  protected void configure() {
+    bind(MainVerticle.class).toInstance(new MainVerticle(monitorRepository));
+  }
 
   private void establishCollection(MongoClient mc, String collectionName) {
     mc.createCollection(collectionName, h -> {

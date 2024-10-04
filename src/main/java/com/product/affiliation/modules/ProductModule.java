@@ -34,9 +34,13 @@ public class ProductModule extends AbstractModule {
         }
 
         mongoClient = MongoClient.createShared(vtx, mongoDBConfig);
+
+      establishCollection(mongoClient, MonitorRepository.COLLECTION_NAME);
+
       monitorRepository = new MonitorRepositoryImpl(mongoClient);
 
-      monitorRepository.createMonitor(createSampleMonitor()).onSuccess(h -> {
+      monitorRepository.createMonitor(createSampleMonitor())
+        .onSuccess(h -> {
           System.out.println("Monitor successfully created " + h.getId());
         })
         .onFailure(t -> System.err.println(t));
@@ -46,6 +50,17 @@ public class ProductModule extends AbstractModule {
     protected void configure() {
       bind(MainVerticle.class).toInstance(new MainVerticle(monitorRepository));
     }
+
+  private void establishCollection(MongoClient mc, String collectionName) {
+    mc.createCollection(collectionName, h -> {
+      if (h.succeeded()) {
+        System.out.println("Created DB " + collectionName);
+      } else {
+        System.out.println("Failed to create DB " + collectionName);
+        h.cause().printStackTrace();
+      }
+    });
+  }
 
   private Monitor createSampleMonitor() {
     Monitor temp = new Monitor(null, "66F6UAC3UK");

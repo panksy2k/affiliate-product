@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 public abstract class Product {
-
   @JsonSetter
   protected final String id;
   @JsonSetter
   protected final String modelName;
+
+  protected String productType;
+
 
   protected Product(String id, String modelName) {
     this.id = id;
@@ -26,6 +28,7 @@ public abstract class Product {
   }
 
   @JsonGetter("productType")
-  @JsonSetter("productType")
   protected abstract String getProductType();
+  @JsonSetter("productType")
+  protected abstract void setProductType(String productType);
 }

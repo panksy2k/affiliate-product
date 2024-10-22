@@ -23,6 +23,16 @@ public class Monitor extends Product {
     return "MONITOR";
   }
 
+  public static Monitor withId(String id, Monitor transientObject) {
+    Monitor temp = new Monitor(id, transientObject.getModelName());
+    temp.setRefreshRate(transientObject.getRefreshRate());
+    temp.setResponseTime(transientObject.getResponseTime());
+    temp.setScreenSize(transientObject.getScreenSize());
+    temp.setProductType(transientObject.getProductType());
+
+    return temp;
+  }
+
   public RefreshRate getRefreshRate() {
     return refreshRate;
   }
@@ -47,13 +57,9 @@ public class Monitor extends Product {
     this.screenSize = screenSize;
   }
 
-  public static Monitor withId(String id, Monitor transientObject) {
-    Monitor temp = new Monitor(id, transientObject.getModelName());
-    temp.setRefreshRate(transientObject.getRefreshRate());
-    temp.setResponseTime(transientObject.getResponseTime());
-    temp.setScreenSize(transientObject.getScreenSize());
-
-    return temp;
+  @Override
+  public void setProductType(String productType) {
+    this.productType = productType;
   }
 
   @Override

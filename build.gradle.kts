@@ -32,6 +32,7 @@ application {
 dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
   implementation("io.vertx:vertx-mongo-client")
+  implementation("io.vertx:vertx-web")
   implementation("org.testcontainers:testcontainers:1.16.2")
   implementation("org.testcontainers:mongodb:1.16.2")
   implementation("com.google.inject:guice:5.0.1")
@@ -39,9 +40,9 @@ dependencies {
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}")
   implementation("com.obsidiandynamics.fulcrum:fulcrum-worker:${fulcrumVersion}")
   implementation("com.obsidiandynamics.fulcrum:fulcrum-json:${fulcrumVersion}")
-  //testImplementation("io.vertx:vertx-unit")
+  implementation("com.obsidiandynamics.fulcrum:fulcrum-constraints:${fulcrumVersion}")
+
   testImplementation("io.vertx:vertx-junit5")
-  //testImplementation("junit:junit:4.13.2")
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
   testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
   testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")

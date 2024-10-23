@@ -1,10 +1,14 @@
 package com.product.affiliation.web;
 
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.ProductQuery;
 import com.product.affiliation.repositories.MonitorRepository;
 import com.product.affiliation.validators.ProductValidator;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MonitorController {
     private final MonitorRepository monitorRepository;
@@ -57,5 +61,28 @@ public class MonitorController {
           context.response().setStatusCode(404).end();
         }
       });
+  }
+
+  public void findMonitors(RoutingContext context) {
+    JsonArray payloadAsArray = context.body().asJsonArray();
+    List<ProductQuery> queryParam = new ArrayList<>(payloadAsArray.size());
+
+    for (int i = 0; i < payloadAsArray.size(); i++) {
+      JsonObject payloadElement = payloadAsArray.getJsonObject(i);
+
+      ProductQuery q = new ProductQuery();
+      q.setKey(payloadElement.getString("k"));
+      q.setValue(payloadElement.getValue("v"));
+      q.setOperation(ProductQuery.Operator.valueOf(payloadElement.getString("operator")));
+
+      queryParam.add(q);
+    }
+
+    monitorRepository.findMonitors(queryParam)
+      .onSuccess(ms -> {
+        JsonObject responseBody = JsonObject.mapFrom(ms);
+        context.response().setStatusCode(200).end(responseBody.encode());
+      })
+      .onFailure(context::fail);
   }
 }

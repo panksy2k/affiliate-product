@@ -10,6 +10,7 @@ import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
 import com.product.affiliation.repositories.MonitorRepository;
 import com.product.affiliation.repositories.MonitorRepositoryImpl;
+import com.product.affiliation.web.MonitorController;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -21,10 +22,11 @@ import io.vertx.ext.mongo.MongoClient;
 public class ProductModule extends AbstractModule {
 
   /**
-   * Currently we're abstracting mongoclient - change this as we built up layers
+   * We've abstracted MonitorController into MainVerticle
    */
   private final MongoClient mongoClient;
   private final MonitorRepository monitorRepository;
+  private final MonitorController monitorController;
 
   public ProductModule(Vertx vtx, ApplicationConfig appConfig) throws DependencyCreationException {
     JsonObject mongoDBConfig = appConfig.getMongoDBConfig();
@@ -33,17 +35,19 @@ public class ProductModule extends AbstractModule {
       throw new DependencyCreationException("mongoDB config not available - cannot instantiate mongoclient");
     }
 
-    mongoClient = MongoClient.createShared(vtx, mongoDBConfig);
+    this.mongoClient = MongoClient.createShared(vtx, mongoDBConfig);
 
     establishCollection(mongoClient, MonitorRepository.COLLECTION_NAME);
     establishIndexes(mongoClient, MonitorRepository.COLLECTION_NAME);
-    monitorRepository = new MonitorRepositoryImpl(mongoClient);
 
-    monitorRepository.createMonitor(createSampleMonitor())
+    this.monitorRepository = new MonitorRepositoryImpl(mongoClient);
+    this.monitorRepository.createMonitor(createSampleMonitor())
       .onSuccess(h -> {
         System.out.println("Monitor successfully created " + h.getId());
       })
       .onFailure(t -> System.err.println(t));
+
+    this.monitorController = new MonitorController(this.monitorRepository);
   }
 
   private void establishIndexes(MongoClient mongoClient, String collectionName) {
@@ -69,7 +73,7 @@ public class ProductModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    bind(MainVerticle.class).toInstance(new MainVerticle(monitorRepository));
+    bind(MainVerticle.class).toInstance(new MainVerticle(this.monitorController));
   }
 
   private void establishCollection(MongoClient mc, String collectionName) {

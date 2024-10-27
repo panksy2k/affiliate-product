@@ -33,6 +33,7 @@ dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
   implementation("io.vertx:vertx-mongo-client")
   implementation("io.vertx:vertx-web")
+  implementation("io.vertx:vertx-web-client")
   implementation("org.testcontainers:testcontainers:1.16.2")
   implementation("org.testcontainers:mongodb:1.16.2")
   implementation("com.google.inject:guice:5.0.1")

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(VertxExtension.class)
 public class ProductQueryTest {
-
   @Test
   public void testDeserializationProductQuery() throws Exception {
     String inputJson = "{\"k\":\"screenSize\",\"v\":27.2,\"operator\":\"IS\"}";
@@ -21,7 +20,6 @@ public class ProductQueryTest {
     assertEquals("screenSize", parse.getKey());
     assertEquals("IS", parse.getOperation().name());
     assertEquals(27.2, parse.getValue());
-
   }
 
   @Test

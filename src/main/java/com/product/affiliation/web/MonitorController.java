@@ -71,16 +71,16 @@ public class MonitorController {
       JsonObject payloadElement = payloadAsArray.getJsonObject(i);
 
       ProductQuery q = new ProductQuery();
-      q.setKey(payloadElement.getString("k"));
-      q.setValue(payloadElement.getValue("v"));
-      q.setOperation(ProductQuery.Operator.valueOf(payloadElement.getString("operator")));
+      q.setKey(payloadElement.getString("key"));
+      q.setValue(payloadElement.getValue("value"));
+      q.setOperation(ProductQuery.Operator.valueOf(payloadElement.getString("operation")));
 
       queryParam.add(q);
     }
 
     monitorRepository.findMonitors(queryParam)
       .onSuccess(ms -> {
-        JsonObject responseBody = JsonObject.mapFrom(ms);
+        JsonArray responseBody = JsonArray.of(ms.toArray());
         context.response().setStatusCode(200).end(responseBody.encode());
       })
       .onFailure(context::fail);

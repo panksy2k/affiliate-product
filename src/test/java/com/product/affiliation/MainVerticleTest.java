@@ -3,6 +3,7 @@ package com.product.affiliation;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.ProductQuery;
 import com.product.affiliation.models.RefreshRate;
 import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
@@ -10,10 +11,12 @@ import com.product.affiliation.repositories.MonitorRepository;
 import com.product.affiliation.web.MonitorController;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -168,7 +171,46 @@ public class MainVerticleTest {
 
   @Test
   public void testFindMonitorsOnCriteria(VertxTestContext context) {
+    //Given
+    Monitor temp_1 = new Monitor(null, "66F6UAC3UK");
+    temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
+    temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
 
+    Monitor temp_2 = new Monitor(null, "66F6UAC3UK");
+    temp_2.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
+    temp_2.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
+    temp_2.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
+
+    when(mockedRepo.findMonitors(Mockito.anyList())).thenReturn(
+      Future.succeededFuture(Arrays.asList(Monitor.withId("1", temp_1),
+        Monitor.withId("2", temp_2))));
+
+    context.verify(() -> {
+      ProductQuery q1 = new ProductQuery();
+      q1.setKey(MonitorRepository.REFRESH_RATE);
+      q1.setValue("165 Hz");
+      q1.setOperation(ProductQuery.Operator.IS);
+
+      ProductQuery q2 = new ProductQuery();
+      q2.setKey(MonitorRepository.SCREEN_SIZE);
+      q2.setValue("27.0 Inches");
+      q2.setOperation(ProductQuery.Operator.IS);
+
+      JsonArray payloadRequest = JsonArray.of(q1, q2);
+
+      client.postAbs("http://localhost:8080/api/monitors").sendJson(payloadRequest)
+        .onFailure(context::failNow)
+        .onSuccess(result -> {
+          int responseCode = result.statusCode();
+          Assertions.assertEquals(200, responseCode);
+
+          JsonArray responseBodyJsonObject = result.bodyAsJsonArray();
+          System.out.println(responseBodyJsonObject);
+          Assertions.assertEquals(2, responseBodyJsonObject.size());
+
+          context.completeNow();
+        });
+    });
   }
-
 }

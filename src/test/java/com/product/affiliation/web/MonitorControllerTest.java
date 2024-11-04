@@ -11,6 +11,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -53,6 +54,48 @@ public class MonitorControllerTest {
     context.verify(() -> {
       SUT.createMonitor(mockedRoutingContext);
       Mockito.verify(mockedRoutingContext, Mockito.never()).fail(Mockito.any(Throwable.class));
+    });
+    context.completeNow();
+  }
+
+  @Test
+  public void testRemoveMonitor(VertxTestContext context) {
+    //Given
+    Mockito.when(mockedRoutingContext.getBodyAsJson()).thenReturn(JsonObject.of("deleted", "true"));
+    Mockito.when(mockedRoutingContext.response()).thenReturn(mockedHttpResponse);
+    Mockito.when(mockedHttpResponse.getStatusCode()).thenReturn(200);
+
+    //When
+    MonitorController SUT = new MonitorController(monitorRepository);
+
+    context.verify(() -> {
+      SUT.removeMonitor(mockedRoutingContext);
+      Assertions.assertEquals(200, mockedRoutingContext.response().getStatusCode());
+      Assertions.assertEquals("true", mockedRoutingContext.getBodyAsJson().getString("deleted"));
+    });
+    context.completeNow();
+  }
+
+  @Test
+  public void testFindMonitorById(VertxTestContext context) {
+    //Given
+    Monitor temp = new Monitor("1", "66F6UAC3UK");
+    temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
+    temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
+    temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
+    temp.setProductType("MONITOR");
+
+    Mockito.when(mockedRoutingContext.getBodyAsJson()).thenReturn(JsonObject.mapFrom(temp));
+    Mockito.when(mockedRoutingContext.response()).thenReturn(mockedHttpResponse);
+    Mockito.when(mockedHttpResponse.getStatusCode()).thenReturn(200);
+
+    //When
+    MonitorController SUT = new MonitorController(monitorRepository);
+
+    context.verify(() -> {
+      SUT.findMonitorById(mockedRoutingContext);
+      Assertions.assertEquals("MONITOR", mockedRoutingContext.getBodyAsJson().getString("productType"));
+      Assertions.assertEquals(200, mockedRoutingContext.response().getStatusCode());
     });
     context.completeNow();
   }

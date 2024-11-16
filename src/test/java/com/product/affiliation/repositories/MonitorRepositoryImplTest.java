@@ -12,6 +12,8 @@ import io.vertx.junit5.VertxTestContext;
 import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class MonitorRepositoryImplTest extends AbstractRepository {
 
@@ -244,7 +246,6 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
     temp_1.setResponseTime(new ResponseTime(0.5F, ResponseTime.Measurement.Milliseconds));
 
     context.verify(() -> {
-
       SUT.createMonitor(temp_1)
         .map(result -> {
           String primaryId = result.getId();
@@ -259,6 +260,45 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
         })
         .map(l -> {
           assertFalse(l.isPresent());
+          retrieveCheckpoint.flag();
+          return l;
+        })
+        .onSuccess(s -> context.completeNow())
+        .onFailure(context::failNow);
+    });
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"screenSize", "refreshRate", "responseTime"})
+  public void testFindMonitorAttributeSet(String attributeName, VertxTestContext context) {
+    //Given
+    Monitor temp_1 = new Monitor(null, "66F6UAC3UK");
+    temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
+    temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
+
+    Monitor temp_2 = new Monitor(null, "66F6UAC3UK");
+    temp_2.setScreenSize(new ScreenSize(29f, ScreenSize.ScreenUnit.Inches));
+    temp_2.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 195));
+    temp_2.setResponseTime(new ResponseTime(0.35f, ResponseTime.Measurement.Milliseconds));
+
+    //When
+    SUT = new MonitorRepositoryImpl(client);
+    Checkpoint createChkpoint = context.checkpoint();
+    Checkpoint retrieveCheckpoint = context.checkpoint();
+
+    //Then
+    context.verify(() -> {
+      SUT.createMonitorInBatch(Arrays.asList(temp_1, temp_2))
+        .map(result -> {
+          Assertions.assertTrue(result);
+          createChkpoint.flag();
+          return result;
+        })
+        .compose(id -> SUT.findProductAttributes(attributeName))
+        .map(l -> {
+          System.out.println(l);
+          assertTrue(l.size() == 2);
           retrieveCheckpoint.flag();
           return l;
         })

@@ -34,6 +34,10 @@ dependencies {
   implementation("io.vertx:vertx-mongo-client")
   implementation("io.vertx:vertx-web")
   implementation("io.vertx:vertx-web-client")
+  implementation("javax.servlet:javax.servlet-api:4.0.1")
+  implementation("com.vaadin:vaadin-core:24.0.0")
+  implementation("com.vaadin:vaadin-router:24.0.0")
+  implementation("com.vaadin:vaadin-binder:24.0.0")
   implementation("org.testcontainers:testcontainers:1.16.2")
   implementation("org.testcontainers:mongodb:1.16.2")
   implementation("com.google.inject:guice:5.0.1")
@@ -42,6 +46,7 @@ dependencies {
   implementation("com.obsidiandynamics.fulcrum:fulcrum-worker:${fulcrumVersion}")
   implementation("com.obsidiandynamics.fulcrum:fulcrum-json:${fulcrumVersion}")
   implementation("com.obsidiandynamics.fulcrum:fulcrum-constraints:${fulcrumVersion}")
+
 
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")

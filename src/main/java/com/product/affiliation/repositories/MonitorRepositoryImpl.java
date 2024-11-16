@@ -8,6 +8,7 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public class MonitorRepositoryImpl implements MonitorRepository {
 
   @Override
   public Future<Monitor> createMonitor(Monitor product) {
-    if(product == null) {
+    if (product == null) {
       throw new ProductRepositoryException("Monitor object is null -- cannot persist");
     }
 
@@ -33,7 +34,7 @@ public class MonitorRepositoryImpl implements MonitorRepository {
     JsonObject params = f.apply(product);
 
     return mc.save(COLLECTION_NAME, params)
-            .map(id -> Monitor.withId(id, product));
+      .map(id -> Monitor.withId(id, product));
   }
 
   @Override
@@ -122,6 +123,20 @@ public class MonitorRepositoryImpl implements MonitorRepository {
         }
 
         return Optional.<Monitor>empty();
+      });
+  }
+
+  @Override
+  public Future<List<String>> findProductAttributes(String fieldName) {
+    return mc.distinct(COLLECTION_NAME, fieldName, String.class.getName())
+      .map(ja -> {
+        List<String> attributeValues = new ArrayList<>(ja.size());
+
+        for (int i = 0; i < ja.size(); i++) {
+          attributeValues.add(ja.getString(i));
+        }
+
+        return attributeValues;
       });
   }
 }

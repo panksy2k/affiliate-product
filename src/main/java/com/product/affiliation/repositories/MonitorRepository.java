@@ -27,4 +27,6 @@ public interface MonitorRepository {
   Future<List<String>> findMonitorsId(List<ProductQuery> queryCriteria);
 
   Future<Optional<Monitor>> findMonitorById(String id);
+
+  Future<List<String>> findProductAttributes(String fieldName);
 }

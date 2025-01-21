@@ -5,6 +5,8 @@ import com.product.affiliation.MainVerticle;
 import com.product.affiliation.config.ApplicationConfig;
 import com.product.affiliation.exceptions.DependencyCreationException;
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.ProductPrice;
+import com.product.affiliation.models.ProductType;
 import com.product.affiliation.models.RefreshRate;
 import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
@@ -88,7 +90,8 @@ public class ProductModule extends AbstractModule {
   }
 
   private Monitor createSampleMonitor() {
-    Monitor temp = new Monitor(null, "66F6UAC3UK");
+    Monitor temp =
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(197.65, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
     temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));

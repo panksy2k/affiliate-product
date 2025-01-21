@@ -7,6 +7,7 @@ import com.product.affiliation.util.Utils;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.BulkOperation;
+import io.vertx.ext.mongo.FindOptions;
 import io.vertx.ext.mongo.MongoClient;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,13 +128,16 @@ public class MonitorRepositoryImpl implements MonitorRepository {
   }
 
   @Override
-  public Future<List<String>> findProductAttributes(String fieldName) {
-    return mc.distinct(COLLECTION_NAME, fieldName, String.class.getName())
+  public Future<List<String>> findProductAttributes(String returnFieldName, String queryParamProductType) {
+    JsonObject productTypeQuery = new JsonObject().put("productType", queryParamProductType.toUpperCase());
+    JsonObject returnTypeFields = new JsonObject().put(returnFieldName, 1);
+
+    return mc.findWithOptions(COLLECTION_NAME, productTypeQuery, new FindOptions().setFields(returnTypeFields))
       .map(ja -> {
         List<String> attributeValues = new ArrayList<>(ja.size());
 
         for (int i = 0; i < ja.size(); i++) {
-          attributeValues.add(ja.getString(i));
+          attributeValues.add(ja.get(i).getString(returnFieldName));
         }
 
         return attributeValues;

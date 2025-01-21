@@ -13,8 +13,12 @@ public interface MonitorRepository {
   String RESPONSE_TIME = "responseTime";
   String SCREEN_SIZE = "screenSize";
   String MODEL_NAME = "modelName";
-
+  String PRICE = "price";
+  String CURRENCY = "currency";
+  String WARRANTY = "warranty";
   String COLLECTION_NAME = "monitors";
+  String AFFILIATE_LINK = "affiliateURL";
+  String PRODUCT_CONDITION = "productCondition";
 
   Future<Monitor> createMonitor(Monitor product);
 
@@ -28,5 +32,5 @@ public interface MonitorRepository {
 
   Future<Optional<Monitor>> findMonitorById(String id);
 
-  Future<List<String>> findProductAttributes(String fieldName);
+  Future<List<String>> findProductAttributes(String returnFieldName, String queryParamProductType);
 }

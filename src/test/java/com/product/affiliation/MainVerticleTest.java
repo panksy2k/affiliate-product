@@ -3,7 +3,9 @@ package com.product.affiliation;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.ProductPrice;
 import com.product.affiliation.models.ProductQuery;
+import com.product.affiliation.models.ProductType;
 import com.product.affiliation.models.RefreshRate;
 import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
@@ -46,7 +48,8 @@ public class MainVerticleTest {
   @Test
   public void createMonitorEndpointTest(Vertx vertx, VertxTestContext context) {
     //Given
-    Monitor temp = new Monitor(null, "66F6UAC3UK");
+    Monitor temp =
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
     temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -110,7 +113,8 @@ public class MainVerticleTest {
   @Test
   public void testFindMonitorByIdFound(VertxTestContext context) {
     //Given
-    Monitor temp = new Monitor(null, "66F6UAC3UK");
+    Monitor temp =
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
     temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -170,14 +174,41 @@ public class MainVerticleTest {
   }
 
   @Test
+  public void testFindMonitorByAttributeName(VertxTestContext context) {
+    //Given
+    when(mockedRepo.findProductAttributes("refreshRate", "MONITOR")).thenReturn(
+      Future.succeededFuture(Arrays.asList("50 HERTZ", "150 HERTZ")));
+
+    //When + Then
+    context.verify(() -> {
+      client.getAbs("http://localhost:8080/api/monitor/attr/refreshRate")
+        .send()
+        .onFailure(context::failNow)
+        .onSuccess(result -> {
+          int responseCode = result.statusCode();
+          Assertions.assertEquals(200, responseCode);
+
+          JsonArray responseBodyJsonObject = result.bodyAsJsonArray();
+          System.out.println(responseBodyJsonObject);
+          Assertions.assertTrue(responseBodyJsonObject.size() > 0);
+          Assertions.assertEquals("50 HERTZ", responseBodyJsonObject.getString(0));
+
+          context.completeNow();
+        });
+    });
+  }
+
+  @Test
   public void testFindMonitorsOnCriteria(VertxTestContext context) {
     //Given
-    Monitor temp_1 = new Monitor(null, "66F6UAC3UK");
+    Monitor temp_1 =
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
     temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
 
-    Monitor temp_2 = new Monitor(null, "66F6UAC3UK");
+    Monitor temp_2 =
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
     temp_2.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp_2.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_2.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));

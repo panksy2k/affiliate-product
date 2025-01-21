@@ -15,9 +15,7 @@ public class ProductValidator {
 
       final Monitor newMonitor = Monitor.withId(null, createMonitor);
 
-      if (Strings.isBlank(newMonitor.getProductType())) {
-        throw new ValidationError("Product Type is null");
-      }
+      Objects.requireNonNull(newMonitor.getProductType(), "Product Type is null");
 
       if (Strings.isBlank(newMonitor.getModelName())) {
         throw new ValidationError("Model name is null");
@@ -25,6 +23,10 @@ public class ProductValidator {
 
       Objects.requireNonNull(newMonitor.getRefreshRate(), "Refresh rate is unknown");
       Objects.requireNonNull(newMonitor.getScreenSize(), "Screen Size is unknown");
+      Objects.requireNonNull(newMonitor.getProductCondition(), "Condition of the product should be available");
+      Objects.requireNonNull(newMonitor.getAffiliateLink(), "Affiliate link is mandatory");
+      Objects.requireNonNull(newMonitor.getWarranty(), "Product warranty should exist");
+      Objects.requireNonNull(newMonitor.getResponseTime(), "Monitor responsetime should exist");
 
       return Future.succeededFuture(newMonitor);
 
@@ -33,9 +35,9 @@ public class ProductValidator {
     }
   }
 
-  public static Future<String> validateMonitorID(String id) {
+  public static Future<String> validateEmptyValue(String id) {
     if (Strings.isBlank(id)) {
-      return Future.failedFuture("ID is blank or null");
+      return Future.failedFuture("Value is blank or null");
     }
 
     return Future.succeededFuture(id);

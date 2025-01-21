@@ -45,6 +45,7 @@ public class MainVerticle extends AbstractVerticle {
       })
       .compose(vertx::deployVerticle)
       .onFailure(err -> {
+        err.printStackTrace();
         System.out.println(err.getMessage());
         vertx.close();
       })
@@ -66,9 +67,10 @@ public class MainVerticle extends AbstractVerticle {
     router.delete("/api/monitor/:id").handler(monitorController::removeMonitor);
     router.get("/api/monitor/:id").handler(monitorController::findMonitorById);
     router.post("/api/monitors").handler(monitorController::findMonitors);
+    router.get("/api/:type/attr/:name").handler(monitorController::findMonitorAttribute);
 
     server.requestHandler(router);
-    server.listen(8080)
+    server.listen(8090)
       .onFailure(promise::fail)
       .onSuccess(result -> promise.complete());
   }

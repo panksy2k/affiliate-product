@@ -2,6 +2,8 @@ package com.product.affiliation.repositories;
 
 import com.obsidiandynamics.func.CheckedFunction;
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.ProductPrice;
+import com.product.affiliation.models.ProductType;
 import com.product.affiliation.models.RefreshRate;
 import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
@@ -12,7 +14,12 @@ import io.vertx.core.json.JsonObject;
 public class MonitorDocumentMapper implements CheckedFunction<JsonObject, Monitor, RuntimeException> {
   @Override
   public Monitor apply(JsonObject document) throws RuntimeException {
-    Monitor m = new Monitor(document.getString("_id"), document.getString(MonitorRepository.MODEL_NAME));
+
+    Monitor m = new Monitor(document.getString("_id"),
+      document.getString(MonitorRepository.MODEL_NAME),
+      Strings.tokens(document.getString(MonitorRepository.PRICE), ProductPrice::parse),
+      ProductType.MONITOR
+    );
 
     String refreshRateStored = document.getString(MonitorRepository.REFRESH_RATE);
     if (!StringUtil.isNullOrEmpty(refreshRateStored)) {

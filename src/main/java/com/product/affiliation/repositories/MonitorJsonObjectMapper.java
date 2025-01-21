@@ -16,6 +16,19 @@ public class MonitorJsonObjectMapper implements Function<Monitor, JsonObject> {
     params.put(MonitorRepository.SCREEN_SIZE, product.getScreenSize().toString());
     params.put(MonitorRepository.MODEL_NAME, product.getModelName());
 
+    params.put(MonitorRepository.WARRANTY, nullSafeToString(product.getWarranty()));
+    params.put(MonitorRepository.AFFILIATE_LINK, product.getAffiliateLink());
+    params.put(MonitorRepository.PRODUCT_CONDITION, nullSafeToString(product.getProductCondition()));
+    params.put(MonitorRepository.PRICE, nullSafeToString(product.getPrice()));
+
     return params;
+  }
+
+  private <T> String nullSafeToString(T productAttribute) {
+    if (productAttribute == null) {
+      return "";
+    }
+
+    return productAttribute.toString();
   }
 }

@@ -18,16 +18,17 @@ public class Monitor extends Product {
   private ProductWarranty warranty;
 
   public Monitor() {
-    super(null, null, null, null);
+    super(null, null, null, null, null);
   }
 
-  public Monitor(String id, String modelName, ProductPrice price, ProductType productType) {
-    super(id, modelName, price, productType);
+  public Monitor(String id, String modelName, ProductPrice price, ProductType productType, String description) {
+    super(id, modelName, price, productType, description);
   }
 
   public static Monitor withId(String id, Monitor transientObject) {
     Monitor temp =
-      new Monitor(id, transientObject.getModelName(), transientObject.getPrice(), transientObject.getProductType());
+      new Monitor(id, transientObject.getModelName(), transientObject.getPrice(), transientObject.getProductType(),
+        transientObject.getDescription());
     temp.setRefreshRate(transientObject.getRefreshRate());
     temp.setResponseTime(transientObject.getResponseTime());
     temp.setScreenSize(transientObject.getScreenSize());
@@ -89,11 +90,6 @@ public class Monitor extends Product {
 
   public void setScreenSize(ScreenSize screenSize) {
     this.screenSize = screenSize;
-  }
-
-  @Override
-  public ProductPrice getPrice() {
-    return this.price;
   }
 
   @Override

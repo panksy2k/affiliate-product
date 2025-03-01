@@ -1,9 +1,11 @@
 package com.product.affiliation.repositories;
 
 import com.obsidiandynamics.func.CheckedFunction;
+import com.product.affiliation.models.ConditionProduct;
 import com.product.affiliation.models.Monitor;
 import com.product.affiliation.models.ProductPrice;
 import com.product.affiliation.models.ProductType;
+import com.product.affiliation.models.ProductWarranty;
 import com.product.affiliation.models.RefreshRate;
 import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
@@ -18,7 +20,8 @@ public class MonitorDocumentMapper implements CheckedFunction<JsonObject, Monito
     Monitor m = new Monitor(document.getString("_id"),
       document.getString(MonitorRepository.MODEL_NAME),
       Strings.tokens(document.getString(MonitorRepository.PRICE), ProductPrice::parse),
-      ProductType.MONITOR
+      ProductType.MONITOR,
+      document.getString(MonitorRepository.DESCRIPTION)
     );
 
     String refreshRateStored = document.getString(MonitorRepository.REFRESH_RATE);
@@ -44,6 +47,17 @@ public class MonitorDocumentMapper implements CheckedFunction<JsonObject, Monito
         m.setScreenSize(screen);
       }
     }
+
+    String warrantyStored = document.getString(MonitorRepository.WARRANTY);
+    if (!StringUtil.isNullOrEmpty(warrantyStored)) {
+      ProductWarranty prdWarranty = Strings.tokens(warrantyStored, ProductWarranty::parse);
+      if (prdWarranty != null) {
+        m.setWarranty(prdWarranty);
+      }
+    }
+
+    m.setAffiliateLink(document.getString(MonitorRepository.AFFILIATE_LINK));
+    m.setProductCondition(ConditionProduct.fromName(document.getString(MonitorRepository.PRODUCT_CONDITION)));
 
     return m;
   }

@@ -63,11 +63,11 @@ public class MainVerticle extends AbstractVerticle {
     router.route("/api/*").handler(BodyHandler.create());
     router.route("/api/*").handler(CorsHandler.create("*"));
 
-    router.post("/api/monitor").handler(monitorController::createMonitor);
-    router.delete("/api/monitor/:id").handler(monitorController::removeMonitor);
-    router.get("/api/monitor/:id").handler(monitorController::findMonitorById);
-    router.post("/api/monitors").handler(monitorController::findMonitors);
-    router.get("/api/:type/attr/:name").handler(monitorController::findMonitorAttribute);
+    router.post("/api/product").handler(monitorController::createMonitor);
+    router.delete("/api/product/:id").handler(monitorController::removeMonitor);
+    router.get("/api/product/:id").handler(monitorController::findMonitorById);
+    router.get("/api/product/attr/:name").handler(monitorController::findMonitorAttribute);
+    router.post("/api/product/get/all").handler(monitorController::findMonitors);
 
     server.requestHandler(router);
     server.listen(8090)

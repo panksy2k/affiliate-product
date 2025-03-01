@@ -5,11 +5,13 @@ import com.product.affiliation.models.Monitor;
 import com.product.affiliation.models.ProductQuery;
 import com.product.affiliation.util.Utils;
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.FindOptions;
 import io.vertx.ext.mongo.MongoClient;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,14 +73,27 @@ public class MonitorRepositoryImpl implements MonitorRepository {
       switch (criteria.getOperation()) {
         case GT:
         case LT: {
-          JsonObject subQuery = new JsonObject();
-          subQuery.put(criteria.getOperation().getValue(), criteria.getValue());
-          query.put(criteria.getKey(), subQuery);
+          query.put(criteria.getKey(), new JsonObject().put(criteria.getOperation().getValue(), criteria.getValue()));
           break;
         }
-        case IS:
+        case IS: {
           query.put(criteria.getKey(), criteria.getValue());
           break;
+        }
+        case IN: {
+          if (criteria.getValue() != null && criteria.getValue() instanceof List<?>) {
+            List<?> payloadList = (List<?>) criteria.getValue();
+            for (int j = 0; j < payloadList.size(); j++) {
+              Object underlineArray = payloadList.get(j);
+              if (underlineArray instanceof ArrayList<?>) {
+                JsonArray ar = new JsonArray();
+                ((ArrayList) underlineArray).stream().forEach(ar::add);
+                query.put(criteria.getKey(), new JsonObject().put(criteria.getOperation().getValue(), ar));
+              }
+            }
+          }
+          break;
+        }
       }
     }
 
@@ -94,14 +109,26 @@ public class MonitorRepositoryImpl implements MonitorRepository {
       switch (criteria.getOperation()) {
         case GT:
         case LT: {
-          JsonObject subQuery = new JsonObject();
-          subQuery.put(criteria.getOperation().getValue(), criteria.getValue());
-          query.put(criteria.getKey(), subQuery);
+          query.put(criteria.getKey(), new JsonObject().put(criteria.getOperation().getValue(), criteria.getValue()));
           break;
         }
-        case IS:
+        case IS: {
           query.put(criteria.getKey(), criteria.getValue());
           break;
+        }
+        case IN: {
+          Object inClauseBasedValue = criteria.getValue();
+          System.out.println(inClauseBasedValue.getClass().getSimpleName());
+          if (inClauseBasedValue instanceof Collection<?>) {
+            Collection<?> flattenValueList = (Collection<?>) inClauseBasedValue;
+            JsonArray mongoArrayObj = new JsonArray();
+            flattenValueList.stream().forEach(e -> mongoArrayObj.add(e));
+            System.out.println("Putting collection with in clause " + mongoArrayObj.toString());
+            query.put(criteria.getKey(), new JsonObject().put(criteria.getOperation().getValue(), mongoArrayObj));
+          }
+
+          break;
+        }
       }
     }
 

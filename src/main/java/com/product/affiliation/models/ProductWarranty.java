@@ -45,7 +45,35 @@ public class ProductWarranty {
       .toString();
   }
 
+  public static ProductWarranty parse(String warrantyFullName) {
+    if (warrantyFullName == null) {
+      return new ProductWarranty();
+    }
+
+    String[] splittedWarrantyValue = warrantyFullName.split(" ");
+    if (splittedWarrantyValue.length == 1) {
+      return new ProductWarranty(Integer.valueOf(splittedWarrantyValue[0]), null);
+    }
+
+    if (splittedWarrantyValue.length == 2) {
+      return new ProductWarranty(Integer.valueOf(splittedWarrantyValue[0]),
+        ProductWarranty.Warranty.fromValue(splittedWarrantyValue[1]));
+    }
+
+    return new ProductWarranty();
+  }
+
   public enum Warranty {
-    Months, Years
+    Months, Years;
+
+    public static ProductWarranty.Warranty fromValue(String valueStr) {
+      for (ProductWarranty.Warranty r : ProductWarranty.Warranty.values()) {
+        if (r.name().equals(valueStr)) {
+          return r;
+        }
+      }
+
+      return null;
+    }
   }
 }

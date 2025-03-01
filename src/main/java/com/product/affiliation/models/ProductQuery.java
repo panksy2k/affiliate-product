@@ -34,8 +34,17 @@ public class ProductQuery {
     this.operation = operation;
   }
 
+  @Override
+  public String toString() {
+    return "ProductQuery{" +
+      "key='" + key + '\'' +
+      ", value=" + value +
+      ", operation=" + operation +
+      '}';
+  }
+
   public enum Operator {
-    GT("$gt"), LT("$lt"), IS("");
+    GT("$gt"), LT("$lt"), IS(""), IN("$in");
     final String value;
 
     Operator(String mongoOperator) {

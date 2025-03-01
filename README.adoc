@@ -41,3 +41,7 @@ mongosh
 use products
 db.createCollection("monitors")
 ```
+
+API calls
+```
+echo -n '{"type":"MONITOR", "attr": []}' | http POST http://localhosyt:8090/api/product/get/all

@@ -4,9 +4,11 @@ import com.google.inject.AbstractModule;
 import com.product.affiliation.MainVerticle;
 import com.product.affiliation.config.ApplicationConfig;
 import com.product.affiliation.exceptions.DependencyCreationException;
+import com.product.affiliation.models.ConditionProduct;
 import com.product.affiliation.models.Monitor;
 import com.product.affiliation.models.ProductPrice;
 import com.product.affiliation.models.ProductType;
+import com.product.affiliation.models.ProductWarranty;
 import com.product.affiliation.models.RefreshRate;
 import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
@@ -16,9 +18,10 @@ import com.product.affiliation.web.MonitorController;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
 /**
- * This class does the IOC using Google guice and ensures all dependencues are
+ * This class does the IOC using Google guice and ensures all dependencies are
  * correctly abstracted with one that is binded at the top for exposure (via verticle)
  */
 public class ProductModule extends AbstractModule {
@@ -50,6 +53,18 @@ public class ProductModule extends AbstractModule {
       .onFailure(t -> System.err.println(t));
 
     this.monitorController = new MonitorController(this.monitorRepository);
+
+    createCacheCluster(appConfig.getClusterManager());
+  }
+
+  private void createCacheCluster(HazelcastClusterManager clusterMgr) {
+    Vertx.builder().withClusterManager(clusterMgr).buildClustered().onComplete(res -> {
+      if (res.succeeded()) {
+        System.out.println("Hazelcast cluster established!");
+      } else {
+        System.err.println("Hazelcast cluster formation failed!");
+      }
+    });
   }
 
   private void establishIndexes(MongoClient mongoClient, String collectionName) {
@@ -91,10 +106,14 @@ public class ProductModule extends AbstractModule {
 
   private Monitor createSampleMonitor() {
     Monitor temp =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(197.65, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
-    temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
-    temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
-    temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
+      new Monitor(null, "16F6UAC3UK", new ProductPrice(297.65, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "BenQ 24 Inch Gaming Monitor");
+    temp.setScreenSize(new ScreenSize(24f, ScreenSize.ScreenUnit.Inches));
+    temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 200));
+    temp.setResponseTime(new ResponseTime(0.75f, ResponseTime.Measurement.Milliseconds));
+    temp.setProductCondition(ConditionProduct.New);
+    temp.setWarranty(new ProductWarranty(18, ProductWarranty.Warranty.Months));
+    temp.setAffiliateLink("http://pankajpardasani.co.uk");
 
     return temp;
   }

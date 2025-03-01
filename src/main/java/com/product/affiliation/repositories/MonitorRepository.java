@@ -19,6 +19,7 @@ public interface MonitorRepository {
   String COLLECTION_NAME = "monitors";
   String AFFILIATE_LINK = "affiliateURL";
   String PRODUCT_CONDITION = "productCondition";
+  String DESCRIPTION = "description";
 
   Future<Monitor> createMonitor(Monitor product);
 

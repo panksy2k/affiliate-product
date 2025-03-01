@@ -7,4 +7,18 @@ public enum ConditionProduct {
   public String toString() {
     return this.name();
   }
+
+  public static ConditionProduct fromName(String sourceMatch) {
+    if (sourceMatch == null) {
+      return null;
+    }
+
+    for (ConditionProduct temp : values()) {
+      if (temp.name().equalsIgnoreCase(sourceMatch)) {
+        return temp;
+      }
+    }
+
+    return null;
+  }
 }

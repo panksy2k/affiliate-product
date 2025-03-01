@@ -2,15 +2,20 @@ package com.product.affiliation.web;
 
 import com.product.affiliation.models.Monitor;
 import com.product.affiliation.models.ProductQuery;
+import com.product.affiliation.models.ProductType;
 import com.product.affiliation.repositories.MonitorRepository;
 import com.product.affiliation.validators.ProductValidator;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.RoutingContext;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class MonitorController {
   private final MonitorRepository monitorRepository;
@@ -66,31 +71,51 @@ public class MonitorController {
   }
 
   public void findMonitors(RoutingContext context) {
-    JsonArray payloadAsArray = context.body().asJsonArray();
-    List<ProductQuery> queryParam = new ArrayList<>(payloadAsArray.size());
+    RequestBody requestPayload = context.body();
+    List<ProductQuery> queryParam = new ArrayList<>(1);
 
-    for (int i = 0; i < payloadAsArray.size(); i++) {
-      JsonObject payloadElement = payloadAsArray.getJsonObject(i);
+    if (requestPayload != null && requestPayload.asJsonObject() != null) {
+      JsonObject payloadJSON = requestPayload.asJsonObject();
 
-      ProductQuery q = new ProductQuery();
-      q.setKey(payloadElement.getString("key"));
-      q.setValue(payloadElement.getValue("value"));
-      q.setOperation(ProductQuery.Operator.valueOf(payloadElement.getString("operation")));
+      Map<String, Object> payloadJsonAsMap = payloadJSON.getMap();
 
-      queryParam.add(q);
+      final ProductType productType =
+        Optional.ofNullable(payloadJsonAsMap.get("productType")).map(String::valueOf).map(ProductType::valueOf)
+          .orElse(null);
+      if (productType == ProductType.MONITOR) {
+        List<?> payloadAsArray = (List<?>) payloadJsonAsMap.getOrDefault("attr", Collections.emptyList());
+        if (!payloadAsArray.isEmpty()) {
+          for (int i = 0; i < payloadAsArray.size(); i++) {
+            Map<String, ?> payloadElement = (Map<String, ?>) payloadAsArray.get(i);
+
+            ProductQuery q = new ProductQuery();
+            q.setKey(String.valueOf(payloadElement.get("key")));
+            q.setOperation(ProductQuery.Operator.valueOf(String.valueOf(payloadElement.get("operation"))));
+            q.setValue(payloadElement.get("value"));
+
+            queryParam.add(q);
+          }
+        }
+
+        System.out.println("Received query " + queryParam);
+
+        monitorRepository.findMonitors(queryParam)
+          .onSuccess(ms -> {
+            JsonArray responseBody = JsonArray.of(ms.toArray());
+            System.out.println("Sending " + responseBody.encodePrettily());
+
+            context.response().setStatusCode(200).end(responseBody.encode());
+          })
+          .onFailure(context::fail);
+      } else {
+        context.response().setStatusCode(400).end("Bad request");
+      }
     }
-
-    monitorRepository.findMonitors(queryParam)
-      .onSuccess(ms -> {
-        JsonArray responseBody = JsonArray.of(ms.toArray());
-        context.response().setStatusCode(200).end(responseBody.encode());
-      })
-      .onFailure(context::fail);
   }
 
   public void findMonitorAttribute(RoutingContext context) {
     String attributeName = context.pathParam("name");
-    String typeProduct = context.pathParam("type");
+    String typeProduct = context.queryParams().get("productType");
     Future<String> attributeValidationFuture = ProductValidator.validateEmptyValue(attributeName);
     Future<String> typeNameValidationFuture = ProductValidator.validateEmptyValue(typeProduct);
 

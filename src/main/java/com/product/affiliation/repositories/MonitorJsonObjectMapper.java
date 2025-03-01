@@ -20,6 +20,8 @@ public class MonitorJsonObjectMapper implements Function<Monitor, JsonObject> {
     params.put(MonitorRepository.AFFILIATE_LINK, product.getAffiliateLink());
     params.put(MonitorRepository.PRODUCT_CONDITION, nullSafeToString(product.getProductCondition()));
     params.put(MonitorRepository.PRICE, nullSafeToString(product.getPrice()));
+    params.put(MonitorRepository.DESCRIPTION, nullSafeToString(product.getDescription()));
+
 
     return params;
   }

@@ -12,13 +12,19 @@ public abstract class Product {
   protected final ProductType productType;
   @JsonSetter
   protected final ProductPrice price;
+  @JsonSetter
+  protected final String description;
 
-  protected Product(String id, String modelName, ProductPrice price, ProductType productType) {
+  protected Product(String id, String modelName, ProductPrice price, ProductType productType, String desc) {
     this.id = id;
     this.modelName = modelName;
     this.price = price;
     this.productType = productType;
+    this.description = desc;
   }
+
+  @JsonGetter("productType")
+  protected abstract ProductType getProductType();
 
   @JsonGetter
   public String getId() {
@@ -30,9 +36,13 @@ public abstract class Product {
     return modelName;
   }
 
-  @JsonGetter("productType")
-  protected abstract ProductType getProductType();
+  @JsonGetter
+  public ProductPrice getPrice() {
+    return this.price;
+  }
 
   @JsonGetter
-  protected abstract ProductPrice getPrice();
+  public String getDescription() {
+    return this.description;
+  }
 }

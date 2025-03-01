@@ -43,6 +43,7 @@ dependencies {
   implementation("com.obsidiandynamics.fulcrum:fulcrum-worker:${fulcrumVersion}")
   implementation("com.obsidiandynamics.fulcrum:fulcrum-json:${fulcrumVersion}")
   implementation("com.obsidiandynamics.fulcrum:fulcrum-constraints:${fulcrumVersion}")
+  implementation("io.vertx:vertx-hazelcast:4.5.13")
 
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")

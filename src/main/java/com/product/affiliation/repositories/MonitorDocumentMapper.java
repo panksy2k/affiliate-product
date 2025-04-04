@@ -2,6 +2,7 @@ package com.product.affiliation.repositories;
 
 import com.obsidiandynamics.func.CheckedFunction;
 import com.product.affiliation.models.ConditionProduct;
+import com.product.affiliation.models.MaxDisplayResolution;
 import com.product.affiliation.models.Monitor;
 import com.product.affiliation.models.ProductPrice;
 import com.product.affiliation.models.ProductType;
@@ -13,6 +14,9 @@ import com.product.affiliation.util.Strings;
 import io.netty.util.internal.StringUtil;
 import io.vertx.core.json.JsonObject;
 
+/**
+ * To convert the mongodb json object into domain object (for UI/deserialization to json)
+ */
 public class MonitorDocumentMapper implements CheckedFunction<JsonObject, Monitor, RuntimeException> {
   @Override
   public Monitor apply(JsonObject document) throws RuntimeException {
@@ -58,6 +62,15 @@ public class MonitorDocumentMapper implements CheckedFunction<JsonObject, Monito
 
     m.setAffiliateLink(document.getString(MonitorRepository.AFFILIATE_LINK));
     m.setProductCondition(ConditionProduct.fromName(document.getString(MonitorRepository.PRODUCT_CONDITION)));
+    m.setBrandName(document.getString(MonitorRepository.BRAND));
+
+    String maxDisplayResolution = document.getString(MonitorRepository.DISPLAY_RESOLUTION);
+    if (!StringUtil.isNullOrEmpty(maxDisplayResolution)) {
+      MaxDisplayResolution matchedDisplayResolution = MaxDisplayResolution.fromValue(maxDisplayResolution);
+      if (matchedDisplayResolution != null) {
+        m.setMaxDisplayResolution(matchedDisplayResolution.toString());
+      }
+    }
 
     return m;
   }

@@ -5,6 +5,7 @@ import com.product.affiliation.MainVerticle;
 import com.product.affiliation.config.ApplicationConfig;
 import com.product.affiliation.exceptions.DependencyCreationException;
 import com.product.affiliation.models.ConditionProduct;
+import com.product.affiliation.models.MaxDisplayResolution;
 import com.product.affiliation.models.Monitor;
 import com.product.affiliation.models.ProductPrice;
 import com.product.affiliation.models.ProductType;
@@ -19,6 +20,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class does the IOC using Google guice and ensures all dependencies are
@@ -46,9 +49,9 @@ public class ProductModule extends AbstractModule {
     establishIndexes(mongoClient, MonitorRepository.COLLECTION_NAME);
 
     this.monitorRepository = new MonitorRepositoryImpl(mongoClient);
-    this.monitorRepository.createMonitor(createSampleMonitor())
+    this.monitorRepository.createMonitorInBatch(createSampleMonitor())
       .onSuccess(h -> {
-        System.out.println("Monitor successfully created " + h.getId());
+        System.out.println("Monitor successfully created " + h);
       })
       .onFailure(t -> System.err.println(t));
 
@@ -104,17 +107,107 @@ public class ProductModule extends AbstractModule {
     });
   }
 
-  private Monitor createSampleMonitor() {
-    Monitor temp =
+  private List<Monitor> createSampleMonitor() {
+    List<Monitor> sampleMonitors = new ArrayList<>();
+
+    Monitor temp_1 =
       new Monitor(null, "16F6UAC3UK", new ProductPrice(297.65, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
         "BenQ 24 Inch Gaming Monitor");
-    temp.setScreenSize(new ScreenSize(24f, ScreenSize.ScreenUnit.Inches));
-    temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 200));
-    temp.setResponseTime(new ResponseTime(0.75f, ResponseTime.Measurement.Milliseconds));
-    temp.setProductCondition(ConditionProduct.New);
-    temp.setWarranty(new ProductWarranty(18, ProductWarranty.Warranty.Months));
-    temp.setAffiliateLink("http://pankajpardasani.co.uk");
+    temp_1.setScreenSize(new ScreenSize(24f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 200));
+    temp_1.setResponseTime(new ResponseTime(0.75f, ResponseTime.Measurement.Milliseconds));
+    temp_1.setProductCondition(ConditionProduct.New);
+    temp_1.setWarranty(new ProductWarranty(18, ProductWarranty.Warranty.Months));
+    temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
+    temp_1.setBrandName("BenQ");
+    temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_1920_1080.toString());
 
-    return temp;
+    sampleMonitors.add(temp_1);
+
+    temp_1 =
+      new Monitor(null, "26F6UAC3UK", new ProductPrice(350.65, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "BenQ 27 Inch Gaming Monitor");
+    temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 225));
+    temp_1.setResponseTime(new ResponseTime(0.50f, ResponseTime.Measurement.Milliseconds));
+    temp_1.setProductCondition(ConditionProduct.New);
+    temp_1.setWarranty(new ProductWarranty(24, ProductWarranty.Warranty.Months));
+    temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
+    temp_1.setBrandName("BenQ");
+    temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_1920_1200.toString());
+
+    sampleMonitors.add(temp_1);
+
+    temp_1 =
+      new Monitor(null, "26R6UQW3UK", new ProductPrice(1100.99, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "Dell 42 Inch Monitor");
+    temp_1.setScreenSize(new ScreenSize(42f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 210));
+    temp_1.setResponseTime(new ResponseTime(0.45f, ResponseTime.Measurement.Milliseconds));
+    temp_1.setProductCondition(ConditionProduct.New);
+    temp_1.setWarranty(new ProductWarranty(36, ProductWarranty.Warranty.Months));
+    temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
+    temp_1.setBrandName("Dell");
+    temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_2560_1600.toString());
+
+    sampleMonitors.add(temp_1);
+
+    temp_1 =
+      new Monitor(null, "26R6UPOIUK", new ProductPrice(590.98, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "Dell 42 Inch Monitor");
+    temp_1.setScreenSize(new ScreenSize(34f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 210));
+    temp_1.setResponseTime(new ResponseTime(0.45f, ResponseTime.Measurement.Milliseconds));
+    temp_1.setProductCondition(ConditionProduct.New);
+    temp_1.setWarranty(new ProductWarranty(36, ProductWarranty.Warranty.Months));
+    temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
+    temp_1.setBrandName("Dell");
+    temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_2560_1440.toString());
+
+    sampleMonitors.add(temp_1);
+
+    temp_1 =
+      new Monitor(null, "2126UPOIUK", new ProductPrice(590.98, ProductPrice.ProductCurrency.EUR), ProductType.MONITOR,
+        "BenQ 38 Inch Monitor");
+    temp_1.setScreenSize(new ScreenSize(38f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 210));
+    temp_1.setResponseTime(new ResponseTime(0.45f, ResponseTime.Measurement.Milliseconds));
+    temp_1.setProductCondition(ConditionProduct.New);
+    temp_1.setWarranty(new ProductWarranty(48, ProductWarranty.Warranty.Months));
+    temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
+    temp_1.setBrandName("BenQ");
+    temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_3840_1080.toString());
+
+    sampleMonitors.add(temp_1);
+
+    temp_1 =
+      new Monitor(null, "2126UPOQEK", new ProductPrice(2400.98, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "Dell 50 Inch Monitor");
+    temp_1.setScreenSize(new ScreenSize(50f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 210));
+    temp_1.setResponseTime(new ResponseTime(0.66f, ResponseTime.Measurement.Milliseconds));
+    temp_1.setProductCondition(ConditionProduct.New);
+    temp_1.setWarranty(new ProductWarranty(12, ProductWarranty.Warranty.Months));
+    temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
+    temp_1.setBrandName("Dell");
+    temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_3440_1440.toString());
+
+    sampleMonitors.add(temp_1);
+
+    temp_1 =
+      new Monitor(null, "76Y26UPOQEK", new ProductPrice(2100.98, ProductPrice.ProductCurrency.EUR), ProductType.MONITOR,
+        "Sony 45 Inch Monitor");
+    temp_1.setScreenSize(new ScreenSize(45f, ScreenSize.ScreenUnit.Inches));
+    temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 300));
+    temp_1.setResponseTime(new ResponseTime(0.70f, ResponseTime.Measurement.Milliseconds));
+    temp_1.setProductCondition(ConditionProduct.New);
+    temp_1.setWarranty(new ProductWarranty(18, ProductWarranty.Warranty.Months));
+    temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
+    temp_1.setBrandName("Sony");
+    temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_1920_1200.toString());
+
+    sampleMonitors.add(temp_1);
+
+    return sampleMonitors;
   }
 }

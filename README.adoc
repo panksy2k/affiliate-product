@@ -34,6 +34,11 @@ To run mongodb container
 docker run --name mongodb -p 27017:27017 -d mongodb/mongodb-community-server:latest
 ```
 
+To run the mongodb container from scratch - remove and stop it if it exist
+```
+ansible localhost -m shell -a "docker stop mongodb || true && docker rm -f mongodb || true && docker run -d --name mongodb -p 27017:27017 mongodb/mongodb-community-server:latest" --connection=local
+```
+
 To create database and collection -- bash into mongodb container/shell
 ```
 docker exec -it mongodb bash

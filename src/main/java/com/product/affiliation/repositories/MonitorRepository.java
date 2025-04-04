@@ -20,6 +20,9 @@ public interface MonitorRepository {
   String AFFILIATE_LINK = "affiliateURL";
   String PRODUCT_CONDITION = "productCondition";
   String DESCRIPTION = "description";
+  String BRAND = "brandName";
+  String vendor = "amazon.co.uk";
+  String DISPLAY_RESOLUTION = "displayResolution";
 
   Future<Monitor> createMonitor(Monitor product);
 

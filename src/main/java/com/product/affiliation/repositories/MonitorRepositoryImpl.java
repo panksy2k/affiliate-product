@@ -3,6 +3,7 @@ package com.product.affiliation.repositories;
 import com.product.affiliation.exceptions.ProductRepositoryException;
 import com.product.affiliation.models.Monitor;
 import com.product.affiliation.models.ProductQuery;
+import com.product.affiliation.util.JsonUtils;
 import com.product.affiliation.util.Utils;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
@@ -77,21 +78,19 @@ public class MonitorRepositoryImpl implements MonitorRepository {
           break;
         }
         case IS: {
-          query.put(criteria.getKey(), criteria.getValue());
+          if (criteria.getValue() != null) {
+            query.put(criteria.getKey(), criteria.getValue());
+          }
+
           break;
         }
         case IN: {
-          if (criteria.getValue() != null && criteria.getValue() instanceof List<?>) {
-            List<?> payloadList = (List<?>) criteria.getValue();
-            for (int j = 0; j < payloadList.size(); j++) {
-              Object underlineArray = payloadList.get(j);
-              if (underlineArray instanceof ArrayList<?>) {
-                JsonArray ar = new JsonArray();
-                ((ArrayList) underlineArray).stream().forEach(ar::add);
-                query.put(criteria.getKey(), new JsonObject().put(criteria.getOperation().getValue(), ar));
-              }
-            }
+          if (criteria.getValue() != null && criteria.getValue() instanceof List) {
+            List payloadList = (List) criteria.getValue();
+            JsonArray values = JsonUtils.flattenCollectionToMultiples(payloadList);
+            query.put(criteria.getKey(), new JsonObject().put(criteria.getOperation().getValue(), values));
           }
+
           break;
         }
       }
@@ -108,12 +107,9 @@ public class MonitorRepositoryImpl implements MonitorRepository {
     for (ProductQuery criteria : queryCriteria) {
       switch (criteria.getOperation()) {
         case GT:
-        case LT: {
-          query.put(criteria.getKey(), new JsonObject().put(criteria.getOperation().getValue(), criteria.getValue()));
-          break;
-        }
+        case LT:
         case IS: {
-          query.put(criteria.getKey(), criteria.getValue());
+          query.put(criteria.getKey(), new JsonObject().put(criteria.getOperation().getValue(), criteria.getValue()));
           break;
         }
         case IN: {

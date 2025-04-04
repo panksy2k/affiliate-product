@@ -16,6 +16,10 @@ public class Monitor extends Product {
   private ConditionProduct productCondition;
   @JsonProperty
   private ProductWarranty warranty;
+  @JsonProperty
+  private String brandName;
+  @JsonProperty("displayResolution")
+  private String maxDisplayResolution;
 
   public Monitor() {
     super(null, null, null, null, null);
@@ -35,6 +39,8 @@ public class Monitor extends Product {
     temp.setAffiliateLink(transientObject.getAffiliateLink());
     temp.setProductCondition(transientObject.getProductCondition());
     temp.setWarranty(transientObject.getWarranty());
+    temp.setBrandName(transientObject.getBrandName());
+    temp.setMaxDisplayResolution(transientObject.getMaxDisplayResolution());
 
     return temp;
   }
@@ -92,6 +98,22 @@ public class Monitor extends Product {
     this.screenSize = screenSize;
   }
 
+  public String getBrandName() {
+    return brandName;
+  }
+
+  public void setBrandName(String brandName) {
+    this.brandName = brandName;
+  }
+
+  public String getMaxDisplayResolution() {
+    return maxDisplayResolution;
+  }
+
+  public void setMaxDisplayResolution(String maxDisplayResolution) {
+    this.maxDisplayResolution = maxDisplayResolution;
+  }
+
   @Override
   public String toString() {
     return
@@ -102,6 +124,10 @@ public class Monitor extends Product {
         .append(" screenSize: ").when(screenSize != null).append(screenSize)
         .append(" affiliateLink: ").when(affiliateLink != null).append(affiliateLink)
         .append(" warranty: ").when(warranty != null).append(warranty)
-        .append(" price: ").when(price != null).append(price).toString();
+        .append(" price: ").when(price != null).append(price)
+        .append(" brandName: ").when(brandName != null).append(brandName)
+        .append(" maxDisplay: ").when(maxDisplayResolution != null).append(maxDisplayResolution)
+        .toString();
+
   }
 }

@@ -15,7 +15,8 @@ public class MonitorTest {
   public void testMonitorSerialization() throws JsonOutputException {
     //Given
     Monitor m =
-      new Monitor("123", "68HV6788", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor("123", "68HV6788", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "BenQ 27 Inch");
     m.setResponseTime(new ResponseTime(23.43f, ResponseTime.Measurement.Milliseconds));
     m.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 700));
     m.setScreenSize(new ScreenSize(27.2f, ScreenSize.ScreenUnit.Inches));

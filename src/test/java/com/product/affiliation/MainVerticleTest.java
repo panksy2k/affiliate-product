@@ -49,7 +49,8 @@ public class MainVerticleTest {
   public void createMonitorEndpointTest(Vertx vertx, VertxTestContext context) {
     //Given
     Monitor temp =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -114,7 +115,8 @@ public class MainVerticleTest {
   public void testFindMonitorByIdFound(VertxTestContext context) {
     //Given
     Monitor temp =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -202,13 +204,15 @@ public class MainVerticleTest {
   public void testFindMonitorsOnCriteria(VertxTestContext context) {
     //Given
     Monitor temp_1 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
 
     Monitor temp_2 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_2.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp_2.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_2.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));

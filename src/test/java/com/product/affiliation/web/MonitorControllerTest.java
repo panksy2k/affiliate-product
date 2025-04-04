@@ -40,7 +40,8 @@ public class MonitorControllerTest {
   public void testCreateMonitor(VertxTestContext context) {
     //Given
     Monitor temp =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "24 Inch BENQ Monitor");
     temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -88,7 +89,8 @@ public class MonitorControllerTest {
   public void testFindMonitorById(VertxTestContext context) {
     //Given
     Monitor temp =
-      new Monitor("1", "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor("1", "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "Sony 23 Inch Monitor");
     temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -112,7 +114,8 @@ public class MonitorControllerTest {
   public void testFindMonitorAttributesByName(VertxTestContext context) {
     //Given
     Monitor temp =
-      new Monitor("1", "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor("1", "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "Dell 27 Inch Monitor");
     temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));

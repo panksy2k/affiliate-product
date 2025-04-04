@@ -4,6 +4,9 @@ import com.product.affiliation.models.Monitor;
 import io.vertx.core.json.JsonObject;
 import java.util.function.Function;
 
+/**
+ * To map the domain object into mongodb Json object for persistence
+ */
 public class MonitorJsonObjectMapper implements Function<Monitor, JsonObject> {
 
   @Override
@@ -21,7 +24,9 @@ public class MonitorJsonObjectMapper implements Function<Monitor, JsonObject> {
     params.put(MonitorRepository.PRODUCT_CONDITION, nullSafeToString(product.getProductCondition()));
     params.put(MonitorRepository.PRICE, nullSafeToString(product.getPrice()));
     params.put(MonitorRepository.DESCRIPTION, nullSafeToString(product.getDescription()));
-
+    params.put(MonitorRepository.BRAND, nullSafeToString(product.getBrandName()));
+    params.put(MonitorRepository.DISPLAY_RESOLUTION,
+      nullSafeToValue(product.getMaxDisplayResolution(), disp -> disp.toString()));
 
     return params;
   }
@@ -32,5 +37,13 @@ public class MonitorJsonObjectMapper implements Function<Monitor, JsonObject> {
     }
 
     return productAttribute.toString();
+  }
+
+  private <T> String nullSafeToValue(T productAttribute, Function<T, String> toValue) {
+    if (productAttribute == null) {
+      return "";
+    }
+
+    return toValue.apply(productAttribute);
   }
 }

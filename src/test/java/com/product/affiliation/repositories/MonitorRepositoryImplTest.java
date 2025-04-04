@@ -27,7 +27,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
   public void testCreateMonitor(VertxTestContext context) {
     //Given
     Monitor temp =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "Sony 23 Inch");
     temp.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -54,7 +55,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
   public void testCreateMonitorInBatch(VertxTestContext context) {
     //Given
     Monitor temp_1 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -63,7 +65,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
     temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
 
     Monitor temp_2 =
-      new Monitor(null, "66F6UAC3EU", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3EU", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_2.setScreenSize(new ScreenSize(32f, ScreenSize.ScreenUnit.Inches));
     temp_2.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 200));
     temp_2.setResponseTime(new ResponseTime(0.3f, ResponseTime.Measurement.Milliseconds));
@@ -88,7 +91,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
   @Test
   public void testRemoveMonitor(VertxTestContext context) {
     Monitor temp_1 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -120,7 +124,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
     Checkpoint retrieveCheckpoint = context.checkpoint();
 
     Monitor temp_1 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_1.setScreenSize(new ScreenSize(27.0F, ScreenSize.ScreenUnit.Inches));
     temp_1.setResponseTime(new ResponseTime(0.5F, ResponseTime.Measurement.Milliseconds));
@@ -173,7 +178,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
     Checkpoint retrieveCheckpoint = context.checkpoint();
 
     Monitor temp_1 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_1.setScreenSize(new ScreenSize(27.0F, ScreenSize.ScreenUnit.Inches));
     temp_1.setResponseTime(new ResponseTime(0.5F, ResponseTime.Measurement.Milliseconds));
@@ -223,7 +229,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
     Checkpoint retrieveCheckpoint = context.checkpoint();
 
     Monitor temp_1 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_1.setScreenSize(new ScreenSize(27.0F, ScreenSize.ScreenUnit.Inches));
     temp_1.setResponseTime(new ResponseTime(0.5F, ResponseTime.Measurement.Milliseconds));
@@ -261,7 +268,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
     Checkpoint retrieveCheckpoint = context.checkpoint();
 
     Monitor temp_1 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_1.setScreenSize(new ScreenSize(27.0F, ScreenSize.ScreenUnit.Inches));
     temp_1.setResponseTime(new ResponseTime(0.5F, ResponseTime.Measurement.Milliseconds));
@@ -294,7 +302,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
   public void testFindMonitorAttributeSet(String attributeName, VertxTestContext context) {
     //Given
     Monitor temp_1 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_1.setScreenSize(new ScreenSize(27f, ScreenSize.ScreenUnit.Inches));
     temp_1.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 165));
     temp_1.setResponseTime(new ResponseTime(0.5f, ResponseTime.Measurement.Milliseconds));
@@ -303,7 +312,8 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
     temp_1.setAffiliateLink("https://");
 
     Monitor temp_2 =
-      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR);
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
     temp_2.setScreenSize(new ScreenSize(29f, ScreenSize.ScreenUnit.Inches));
     temp_2.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 195));
     temp_2.setResponseTime(new ResponseTime(0.35f, ResponseTime.Measurement.Milliseconds));

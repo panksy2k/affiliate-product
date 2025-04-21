@@ -102,7 +102,7 @@ public class MonitorController {
         monitorRepository.findMonitors(queryParam)
           .onSuccess(ms -> {
             JsonArray responseBody = JsonArray.of(ms.toArray());
-            System.out.println("Sending " + responseBody.encodePrettily());
+            //System.out.println("Sending " + responseBody.encodePrettily());
 
             context.response().setStatusCode(200).end(responseBody.encode());
           })

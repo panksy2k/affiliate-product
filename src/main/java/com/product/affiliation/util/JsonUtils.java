@@ -4,10 +4,11 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public final class JsonUtils {
 
-  public static <T> JsonArray flattenCollectionToMultiples(List<List<T>> toFlat) {
+  public static <T, V> JsonArray flattenCollectionToMultiples(List<List<T>> toFlat, Function<T, V> converter) {
     final JsonArray temp = new JsonArray();
 
     if (toFlat == null || toFlat.isEmpty()) {
@@ -25,7 +26,7 @@ public final class JsonUtils {
             Object t = underlyingList.get(j);
 
             if (t != null) {
-              temp.add(t);
+              temp.add(converter.apply((T) t));
             }
           }
         }

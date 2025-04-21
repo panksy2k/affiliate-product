@@ -89,7 +89,12 @@ public class MonitorRepositoryImpl implements MonitorRepository {
         case IN: {
           if (criteria.getValue() != null && criteria.getValue() instanceof List) {
             List payloadList = (List) criteria.getValue();
-            JsonArray values = JsonUtils.flattenCollectionToMultiples(payloadList);
+            JsonArray values;
+            if (criteria.getKey().equals(MonitorRepository.SPECIAL_FEATURES)) {
+              values = JsonUtils.flattenCollectionToMultiples(payloadList, MonitorSpecialFeatures::fromValue);
+            } else {
+              values = JsonUtils.flattenCollectionToMultiples(payloadList, Function.identity());
+            }
             query.put(criteria.getKey(), new JsonObject().put(criteria.getOperation().getValue(), values));
           }
 

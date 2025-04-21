@@ -2,6 +2,7 @@ package com.product.affiliation.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.obsidiandynamics.concat.Concat;
+import java.util.Set;
 
 public class Monitor extends Product {
   @JsonProperty
@@ -20,6 +21,8 @@ public class Monitor extends Product {
   private String brandName;
   @JsonProperty("displayResolution")
   private String maxDisplayResolution;
+  @JsonProperty("specialFeatures")
+  private Set<String> specialFeatures;
 
   public Monitor() {
     super(null, null, null, null, null);
@@ -41,8 +44,17 @@ public class Monitor extends Product {
     temp.setWarranty(transientObject.getWarranty());
     temp.setBrandName(transientObject.getBrandName());
     temp.setMaxDisplayResolution(transientObject.getMaxDisplayResolution());
+    temp.setSpecialFeatures(transientObject.getSpecialFeatures());
 
     return temp;
+  }
+
+  public Set<String> getSpecialFeatures() {
+    return specialFeatures;
+  }
+
+  public void setSpecialFeatures(Set<String> specialFeatures) {
+    this.specialFeatures = specialFeatures;
   }
 
   @Override
@@ -127,7 +139,7 @@ public class Monitor extends Product {
         .append(" price: ").when(price != null).append(price)
         .append(" brandName: ").when(brandName != null).append(brandName)
         .append(" maxDisplay: ").when(maxDisplayResolution != null).append(maxDisplayResolution)
+        .append(" specialFeatures: ").when(specialFeatures != null).append(specialFeatures)
         .toString();
-
   }
 }

@@ -4,6 +4,7 @@ import com.obsidiandynamics.func.CheckedFunction;
 import com.product.affiliation.models.ConditionProduct;
 import com.product.affiliation.models.MaxDisplayResolution;
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.MonitorSpecialFeatures;
 import com.product.affiliation.models.ProductPrice;
 import com.product.affiliation.models.ProductType;
 import com.product.affiliation.models.ProductWarranty;
@@ -12,10 +13,14 @@ import com.product.affiliation.models.ResponseTime;
 import com.product.affiliation.models.ScreenSize;
 import com.product.affiliation.util.Strings;
 import io.netty.util.internal.StringUtil;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
- * To convert the mongodb json object into domain object (for UI/deserialization to json)
+ * To convert the mongodb json object into the domain object (for UI/deserialization to json)
  */
 public class MonitorDocumentMapper implements CheckedFunction<JsonObject, Monitor, RuntimeException> {
   @Override
@@ -70,6 +75,19 @@ public class MonitorDocumentMapper implements CheckedFunction<JsonObject, Monito
       if (matchedDisplayResolution != null) {
         m.setMaxDisplayResolution(matchedDisplayResolution.toString());
       }
+    }
+
+    JsonArray specialFeatures = document.getJsonArray(MonitorRepository.SPECIAL_FEATURES);
+    if (specialFeatures != null && !specialFeatures.isEmpty()) {
+      Set<String> specialFeaturesString = new HashSet<>(specialFeatures.size());
+
+      List<Object> sfList = specialFeatures.getList();
+      for (Object sf : sfList) {
+        MonitorSpecialFeatures monitorSpecialFeature = MonitorSpecialFeatures.fromStringEnum((String) sf);
+        specialFeaturesString.add(monitorSpecialFeature.toString());
+      }
+
+      m.setSpecialFeatures(specialFeaturesString);
     }
 
     return m;

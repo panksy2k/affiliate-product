@@ -1,7 +1,10 @@
 package com.product.affiliation.repositories;
 
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.MonitorSpecialFeatures;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -15,7 +18,7 @@ public class MonitorJsonObjectMapper implements Function<Monitor, JsonObject> {
 
     params.put(MonitorRepository.PRODUCT_TYPE, product.getProductType());
     params.put(MonitorRepository.REFRESH_RATE, product.getRefreshRate().toString());
-    params.put(MonitorRepository.RESPONSE_TIME, product.getResponseTime().toString());
+    params.put(MonitorRepository.RESPONSE_TIME, nullSafeToString(product.getResponseTime()));
     params.put(MonitorRepository.SCREEN_SIZE, product.getScreenSize().toString());
     params.put(MonitorRepository.MODEL_NAME, product.getModelName());
 
@@ -26,7 +29,12 @@ public class MonitorJsonObjectMapper implements Function<Monitor, JsonObject> {
     params.put(MonitorRepository.DESCRIPTION, nullSafeToString(product.getDescription()));
     params.put(MonitorRepository.BRAND, nullSafeToString(product.getBrandName()));
     params.put(MonitorRepository.DISPLAY_RESOLUTION,
-      nullSafeToValue(product.getMaxDisplayResolution(), disp -> disp.toString()));
+      nullSafeToStringFunc(product.getMaxDisplayResolution(), disp -> disp.toString()));
+
+    Set<String> specialFeatures = nullSafeToObject(product.getSpecialFeatures(), MonitorSpecialFeatures::fromValues);
+    if (!specialFeatures.isEmpty()) {
+      params.put(MonitorRepository.SPECIAL_FEATURES, new JsonArray(specialFeatures.stream().toList()));
+    }
 
     return params;
   }
@@ -39,9 +47,17 @@ public class MonitorJsonObjectMapper implements Function<Monitor, JsonObject> {
     return productAttribute.toString();
   }
 
-  private <T> String nullSafeToValue(T productAttribute, Function<T, String> toValue) {
+  private <T> String nullSafeToStringFunc(T productAttribute, Function<T, String> toValue) {
     if (productAttribute == null) {
       return "";
+    }
+
+    return toValue.apply(productAttribute);
+  }
+
+  private <T, V> V nullSafeToObject(T productAttribute, Function<T, V> toValue) {
+    if (productAttribute == null) {
+      return null;
     }
 
     return toValue.apply(productAttribute);

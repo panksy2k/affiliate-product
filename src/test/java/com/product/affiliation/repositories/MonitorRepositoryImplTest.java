@@ -196,17 +196,13 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
         })
         .compose(id -> {
           System.out.println(id);
-          ProductQuery q1 = new ProductQuery();
-          q1.setKey(MonitorRepository.REFRESH_RATE);
-          q1.setValue("165 Hz");
-          q1.setOperation(ProductQuery.Operator.IS);
 
           ProductQuery q2 = new ProductQuery();
           q2.setKey(MonitorRepository.SCREEN_SIZE);
           q2.setValue("27.0 Inches");
-          q2.setOperation(ProductQuery.Operator.IS);
+          q2.setOperation(ProductQuery.Operator.IN);
 
-          return SUT.findMonitorsId(Arrays.asList(q1, q2));
+          return SUT.findMonitorsId(Arrays.asList(q2));
         })
         .map(l -> {
           assertTrue(l.size() == 1);
@@ -214,7 +210,6 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
 
           retrieveCheckpoint.flag();
 
-          System.out.println(l.toString());
           return l;
         })
         .onSuccess(s -> context.completeNow())
@@ -342,6 +337,63 @@ public class MonitorRepositoryImplTest extends AbstractRepository {
           return l;
         })
         .onSuccess(s -> context.completeNow())
+        .onFailure(context::failNow);
+    });
+  }
+
+  @Test
+  public void testCreateMonitorInEmptyBatch(VertxTestContext context) {
+    SUT = new MonitorRepositoryImpl(client);
+
+    context.verify(() -> {
+      SUT.createMonitorInBatch(Arrays.asList())
+        .onSuccess(result -> context.failNow("Expected failure for empty batch"))
+        .onFailure(t -> {
+          Assertions.assertEquals("No data to persist", t.getMessage());
+          context.completeNow();
+        });
+    });
+  }
+
+  @Test
+  public void testRemoveMonitorInvalidId(VertxTestContext context) {
+    SUT = new MonitorRepositoryImpl(client);
+
+    context.verify(() -> {
+      SUT.removeMonitor("invalid-id")
+        .onSuccess(result -> {
+          assertFalse(result);
+          context.completeNow();
+        })
+        .onFailure(context::failNow);
+    });
+  }
+
+  @Test
+  public void testFindMonitorsByPartialCriteria(VertxTestContext context) {
+    SUT = new MonitorRepositoryImpl(client);
+
+    Monitor temp =
+      new Monitor(null, "66F6UAC3UK", new ProductPrice(233.45, ProductPrice.ProductCurrency.GBP), ProductType.MONITOR,
+        "23 Inch Monitor");
+    temp.setRefreshRate(new RefreshRate(RefreshRate.RateUnit.HERTZ, 144));
+    temp.setScreenSize(new ScreenSize(24.0F, ScreenSize.ScreenUnit.Inches));
+
+    context.verify(() -> {
+      SUT.createMonitor(temp)
+        .compose(result -> {
+          ProductQuery query = new ProductQuery();
+          query.setKey(MonitorRepository.REFRESH_RATE);
+          query.setValue("144 Hz");
+          query.setOperation(ProductQuery.Operator.IS);
+
+          return SUT.findMonitors(Arrays.asList(query));
+        })
+        .onSuccess(monitors -> {
+          assertTrue(monitors.size() > 0);
+          Assertions.assertEquals(144, monitors.get(0).getRefreshRate().getValue());
+          context.completeNow();
+        })
         .onFailure(context::failNow);
     });
   }

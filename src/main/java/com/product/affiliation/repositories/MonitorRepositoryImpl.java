@@ -2,6 +2,7 @@ package com.product.affiliation.repositories;
 
 import com.product.affiliation.exceptions.ProductRepositoryException;
 import com.product.affiliation.models.Monitor;
+import com.product.affiliation.models.MonitorSpecialFeatures;
 import com.product.affiliation.models.ProductQuery;
 import com.product.affiliation.util.JsonUtils;
 import com.product.affiliation.util.Utils;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class MonitorRepositoryImpl implements MonitorRepository {
@@ -155,15 +157,26 @@ public class MonitorRepositoryImpl implements MonitorRepository {
     JsonObject productTypeQuery = new JsonObject().put("productType", queryParamProductType.toUpperCase());
     JsonObject returnTypeFields = new JsonObject().put(returnFieldName, 1);
 
-    return mc.findWithOptions(COLLECTION_NAME, productTypeQuery, new FindOptions().setFields(returnTypeFields))
-      .map(ja -> {
-        List<String> attributeValues = new ArrayList<>(ja.size());
+    Function<List<JsonObject>, List<String>> monitorAttributeMapping = new MonitorAttributeMapping(returnFieldName);
 
-        for (int i = 0; i < ja.size(); i++) {
-          attributeValues.add(ja.get(i).getString(returnFieldName));
+    return mc.findWithOptions(COLLECTION_NAME, productTypeQuery, new FindOptions().setFields(returnTypeFields))
+      .map(monitorAttributeMapping)
+      .compose(projectValues -> {
+        if (returnFieldName.equals(SPECIAL_FEATURES)) {
+          List<String> specialFeatures = new ArrayList<>();
+
+          for (String specialFeaturesEnumName : projectValues) {
+            MonitorSpecialFeatures monitorSpecialFeatures =
+              MonitorSpecialFeatures.fromStringEnum(specialFeaturesEnumName);
+            if (monitorSpecialFeatures != null) {
+              specialFeatures.add(monitorSpecialFeatures.toString());
+            }
+          }
+
+          return Future.succeededFuture(specialFeatures);
         }
 
-        return attributeValues;
+        return Future.succeededFuture(projectValues);
       });
   }
 }

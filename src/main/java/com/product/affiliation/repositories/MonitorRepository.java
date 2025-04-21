@@ -23,6 +23,7 @@ public interface MonitorRepository {
   String BRAND = "brandName";
   String vendor = "amazon.co.uk";
   String DISPLAY_RESOLUTION = "displayResolution";
+  String SPECIAL_FEATURES = "specialFeatures";
 
   Future<Monitor> createMonitor(Monitor product);
 

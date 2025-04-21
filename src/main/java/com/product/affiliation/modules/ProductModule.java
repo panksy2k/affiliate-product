@@ -1,5 +1,9 @@
 package com.product.affiliation.modules;
 
+import static com.product.affiliation.models.MonitorSpecialFeatures.ANTI_GLARE_SCREEN;
+import static com.product.affiliation.models.MonitorSpecialFeatures.HEIGHT_ADJUSTMENT;
+import static com.product.affiliation.models.MonitorSpecialFeatures.SWIVEL_ADJUSTMENT;
+import static com.product.affiliation.models.MonitorSpecialFeatures.TILT_ADJUSTMENT;
 import com.google.inject.AbstractModule;
 import com.product.affiliation.MainVerticle;
 import com.product.affiliation.config.ApplicationConfig;
@@ -21,7 +25,9 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class does the IOC using Google guice and ensures all dependencies are
@@ -121,6 +127,8 @@ public class ProductModule extends AbstractModule {
     temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
     temp_1.setBrandName("BenQ");
     temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_1920_1080.toString());
+    temp_1.setSpecialFeatures(EnumSet.of(HEIGHT_ADJUSTMENT, SWIVEL_ADJUSTMENT, ANTI_GLARE_SCREEN)
+      .stream().map(e -> e.toString()).collect(Collectors.toSet()));
 
     sampleMonitors.add(temp_1);
 
@@ -135,6 +143,8 @@ public class ProductModule extends AbstractModule {
     temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
     temp_1.setBrandName("BenQ");
     temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_1920_1200.toString());
+    temp_1.setSpecialFeatures(EnumSet.of(SWIVEL_ADJUSTMENT, ANTI_GLARE_SCREEN)
+      .stream().map(e -> e.toString()).collect(Collectors.toSet()));
 
     sampleMonitors.add(temp_1);
 
@@ -149,6 +159,8 @@ public class ProductModule extends AbstractModule {
     temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
     temp_1.setBrandName("Dell");
     temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_2560_1600.toString());
+    temp_1.setSpecialFeatures(EnumSet.of(HEIGHT_ADJUSTMENT, ANTI_GLARE_SCREEN)
+      .stream().map(e -> e.toString()).collect(Collectors.toSet()));
 
     sampleMonitors.add(temp_1);
 
@@ -163,6 +175,8 @@ public class ProductModule extends AbstractModule {
     temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
     temp_1.setBrandName("Dell");
     temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_2560_1440.toString());
+    temp_1.setSpecialFeatures(EnumSet.of(TILT_ADJUSTMENT, ANTI_GLARE_SCREEN)
+      .stream().map(e -> e.toString()).collect(Collectors.toSet()));
 
     sampleMonitors.add(temp_1);
 
@@ -177,6 +191,8 @@ public class ProductModule extends AbstractModule {
     temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
     temp_1.setBrandName("BenQ");
     temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_3840_1080.toString());
+    temp_1.setSpecialFeatures(EnumSet.of(ANTI_GLARE_SCREEN, SWIVEL_ADJUSTMENT)
+      .stream().map(e -> e.toString()).collect(Collectors.toSet()));
 
     sampleMonitors.add(temp_1);
 
@@ -191,7 +207,8 @@ public class ProductModule extends AbstractModule {
     temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
     temp_1.setBrandName("Dell");
     temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_3440_1440.toString());
-
+    temp_1.setSpecialFeatures(EnumSet.of(HEIGHT_ADJUSTMENT)
+      .stream().map(e -> e.toString()).collect(Collectors.toSet()));
     sampleMonitors.add(temp_1);
 
     temp_1 =
@@ -205,7 +222,8 @@ public class ProductModule extends AbstractModule {
     temp_1.setAffiliateLink("http://pankajpardasani.co.uk");
     temp_1.setBrandName("Sony");
     temp_1.setMaxDisplayResolution(MaxDisplayResolution.RES_1920_1200.toString());
-
+    temp_1.setSpecialFeatures(EnumSet.of(SWIVEL_ADJUSTMENT)
+      .stream().map(e -> e.toString()).collect(Collectors.toSet()));
     sampleMonitors.add(temp_1);
 
     return sampleMonitors;
